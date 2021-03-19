@@ -38,19 +38,13 @@ public class MainActivity extends AppCompatActivity {
 
                         break ;
                     case 2 : // GREEN
-                        contentTextview.setBackgroundColor(Color.rgb(0x00, 0xFF, 0x00)) ;
-                        contentTextview.setTextColor(Color.rgb(0x00, 0x00, 0x00)) ;
-                        contentTextview.setText("GREEN") ;
+
                         break ;
                     case 3 : // BLUE
-                        contentTextview.setBackgroundColor(Color.rgb(0x00, 0x00, 0xFF)) ;
-                        contentTextview.setTextColor(Color.rgb(0xFF, 0xFF, 0xFF)) ;
-                        contentTextview.setText("BLUE") ;
+
                         break ;
                     case 4 : // BLACK
-                        contentTextview.setBackgroundColor(Color.rgb(0x00, 0x00, 0x00)) ;
-                        contentTextview.setTextColor(Color.rgb(0xFF, 0xFF, 0xFF)) ;
-                        contentTextview.setText("BLACK") ;
+
                         break ;
                 }
 
