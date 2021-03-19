@@ -37,11 +37,6 @@ public class MainActivity extends AppCompatActivity {
                     case 0 : // WHITE
 
                         break ;
-                    case 1 : // RED
-                        contentTextview.setBackgroundColor(Color.rgb(0xFF, 0x00, 0x00)) ;
-                        contentTextview.setTextColor(Color.rgb(0xFF, 0xFF, 0xFF)) ;
-                        contentTextview.setText("RED") ;
-                        break ;
                     case 2 : // GREEN
                         contentTextview.setBackgroundColor(Color.rgb(0x00, 0xFF, 0x00)) ;
                         contentTextview.setTextColor(Color.rgb(0x00, 0x00, 0x00)) ;
