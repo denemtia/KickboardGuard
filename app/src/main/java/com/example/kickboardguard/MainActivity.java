@@ -44,7 +44,9 @@ public class MainActivity extends AppCompatActivity {
 
                         break ;
                     case 4 : // BLACK
-
+                        contentTextview.setBackgroundColor(Color.rgb(0x00, 0x00, 0x00)) ;
+                        contentTextview.setTextColor(Color.rgb(0xFF, 0xFF, 0xFF)) ;
+                        contentTextview.setText("BLACK") ;
                         break ;
                 }
 
