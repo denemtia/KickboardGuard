@@ -35,9 +35,7 @@ public class MainActivity extends AppCompatActivity {
 
                 switch (position) {
                     case 0 : // WHITE
-                        contentTextview.setBackgroundColor(Color.rgb(0xFF, 0xFF, 0xFF)) ;
-                        contentTextview.setTextColor(Color.rgb(0x00, 0x00, 0x00)) ;
-                        contentTextview.setText("WHITE") ;
+
                         break ;
                     case 1 : // RED
                         contentTextview.setBackgroundColor(Color.rgb(0xFF, 0x00, 0x00)) ;
