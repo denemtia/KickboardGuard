@@ -29,4 +29,5 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/iv_glide"
         android:layout_centerHorizontal="true" />
+
 </RelativeLayout>
