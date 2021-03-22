@@ -64,7 +64,6 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
 
         final String[] items = {"WHITE", "RED", "GREEN", "BLUE", "BLACK"} ;
         ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, items) ;
-        Log.e("getKeyHash", ""+getKeyHash(MainActivity.this));
         listview = (ListView) findViewById(R.id.drawer_menulist) ;
         listview.setAdapter(adapter) ;
 
@@ -317,33 +316,6 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
 
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
                 || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-    }
-
-
-
-
-
-    //해쉬키 값 얻기
-    public static String getKeyHash(final Context context) {
-        PackageManager pm = context.getPackageManager();
-        try {
-            PackageInfo packageInfo = pm.getPackageInfo(context.getPackageName(), PackageManager.GET_SIGNATURES);
-            if (packageInfo == null)
-                return null;
-
-            for (Signature signature : packageInfo.signatures) {
-                try {
-                    MessageDigest md = MessageDigest.getInstance("SHA");
-                    md.update(signature.toByteArray());
-                    return android.util.Base64.encodeToString(md.digest(), android.util.Base64.NO_WRAP);
-                } catch (NoSuchAlgorithmException e) {
-                    e.printStackTrace();
-                }
-            }
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
 }

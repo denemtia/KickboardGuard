@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
+    <!--앱 삭제 했는데 데이터가 남아 있는 문제 데이터 백업기능  allowBackup       -->
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
