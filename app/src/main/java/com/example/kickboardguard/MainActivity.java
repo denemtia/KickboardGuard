@@ -72,8 +72,6 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
             @Override
             public void onItemClick(AdapterView parent, View v, int position, long id) {
 
-                TextView contentTextview = (TextView) findViewById(R.id.drawer_content) ;
-
                 switch (position) {
                     case 0 : // WHITE
 
