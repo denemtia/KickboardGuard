@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "424199690724",
+    "project_id": "kickboardguard",
+    "storage_bucket": "kickboardguard.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:424199690724:android:1ad61e3d05022e814e4ff1",
+        "android_client_info": {
+          "package_name": "com.example.kickboardguard"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "424199690724-af9r44on7ncob5iovj7uquislq7bsgsp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.kickboardguard",
+            "certificate_hash": "031d9028b875672fe00165d4f52e7fdc8eefdbb4"
+          }
+        },
+        {
+          "client_id": "424199690724-clq6cvsvd4mfljoii8iejscthrio4dmb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBv1NKLBDsJEg86bEdyLcvgcq4mX0LLlKM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "424199690724-clq6cvsvd4mfljoii8iejscthrio4dmb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
