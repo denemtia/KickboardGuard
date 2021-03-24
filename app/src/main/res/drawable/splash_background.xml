@@ -6,7 +6,8 @@
     </item>
     <item>
         <bitmap
-            android:src="@drawable/kb"
+
+            android:src="@drawable/kb1"
             android:gravity="center"/>
     </item>
 </layer-list>
