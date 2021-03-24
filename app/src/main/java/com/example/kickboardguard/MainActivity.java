@@ -28,6 +28,8 @@ import com.google.android.material.navigation.NavigationView;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -55,14 +57,28 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
     private static final int PERMISSIONS_REQUEST_CODE = 100;
     String[] REQUIRED_PERMISSIONS  = {Manifest.permission.ACCESS_FINE_LOCATION};
 
-
+    private FragmentManager fragmentManager;
+    private Home home;
+    private Settings settings;
+    private FragmentTransaction transaction;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final String[] items = {"WHITE", "RED", "GREEN", "BLUE", "BLACK"} ;
+        // 프레그먼트 설정 ##########################################################################
+
+        home = new Home();
+        settings = new Settings();
+
+        // 프레그먼트 설정 ##########################################################################
+
+
+
+
+        // 메뉴 설정 ################################################################################
+        final String[] items = {"Home", "Setting", "GREEN", "BLUE", "BLACK"} ;
         ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, items) ;
         Log.e("getKeyHash", ""+getKeyHash(MainActivity.this));
         listview = (ListView) findViewById(R.id.drawer_menulist) ;
@@ -73,36 +89,27 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
             public void onItemClick(AdapterView parent, View v, int position, long id) {
 
                 switch (position) {
-                    case 0 : // WHITE
+                    case 0 : // Home
+                        getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, home).commit();
+                        break;
+                    case 1 : // Setting
+                        getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, settings).commit();
+                        break;
+                    case 2 : // BLUE
 
                         break ;
-                    case 2 : // GREEN
-
-                        break ;
-                    case 3 : // BLUE
-
-                        break ;
-                    case 4 : // BLACK
+                    case 3 : // BLACK
 
                         break ;
                 }
-
-                // 코드 계속 ...
-            }
-        });
-
-        listview.setOnItemClickListener(new ListView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView parent, View v, int position, long id) {
-
-                // ... 코드 계속
-
-                // close drawer.
                 DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer) ;
                 drawer.closeDrawer(Gravity.LEFT) ;
             }
         });
+        // 메뉴 설정 ################################################################################
 
+
+        // 카카오 맵 설정 ############################################################################
         mMapView = (net.daum.mf.map.api.MapView) findViewById(R.id.map_view);
         //mMapView.setDaumMapApiKey(MapApiConst.DAUM_MAPS_ANDROID_APP_API_KEY);
         mMapView.setCurrentLocationEventListener(this);
@@ -114,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
 
             checkRunTimePermission();
         }
-
+        // 카카오 맵 설정 ############################################################################
 
 
 

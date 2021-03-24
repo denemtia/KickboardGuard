@@ -11,8 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 
-public class Home extends Fragment {
-
+public class Settings extends Fragment {
     MainActivity activit;
     @Override
     public void onAttach(Context context){
@@ -30,7 +29,6 @@ public class Home extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-
         }
     }
 
@@ -39,6 +37,6 @@ public class Home extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home, container, false);
+        return inflater.inflate(R.layout.fragment_settings, container, false);
     }
 }
