@@ -12,12 +12,12 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         try {
-            Thread.sleep(8000); // splash 화면 대기 시간
+            Thread.sleep(4000); // splash 화면 대기 시간
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-        startActivity(new Intent(this, MainActivity.class)); // splash 화면이 끝난 뒤 띄울 Activity
+        startActivity(new Intent(this, Login.class)); // splash 화면이 끝난 뒤 띄울 Activity
 
         finish();
     }
