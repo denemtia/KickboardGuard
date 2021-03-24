@@ -8,35 +8,22 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
-import android.graphics.Color;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.view.Menu;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.android.material.navigation.NavigationView;
 
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 import net.daum.mf.map.api.MapPoint;
 import net.daum.mf.map.api.MapReverseGeoCoder;
@@ -44,8 +31,6 @@ import net.daum.mf.map.api.MapView;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements net.daum.mf.map.api.MapView.CurrentLocationEventListener, MapReverseGeoCoder.ReverseGeoCodingResultListener {
 
@@ -57,10 +42,11 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
     private static final int PERMISSIONS_REQUEST_CODE = 100;
     String[] REQUIRED_PERMISSIONS  = {Manifest.permission.ACCESS_FINE_LOCATION};
 
-    private FragmentManager fragmentManager;
+
     private Home home;
     private Settings settings;
-    private FragmentTransaction transaction;
+    private Helmet helmet;
+    private Sensor sensor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +57,8 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
 
         home = new Home();
         settings = new Settings();
-
+        helmet = new Helmet();
+        sensor = new Sensor();
         // 프레그먼트 설정 ##########################################################################
 
 
@@ -96,10 +83,10 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
                         getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, settings).commit();
                         break;
                     case 2 : // sensor
-
+                        getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, sensor).commit();
                         break ;
                     case 3 : // BLACK
-
+                        getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, helmet).commit();
                         break ;
                 }
                 DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer) ;

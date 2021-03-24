@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 
-public class helmet extends Fragment {
+public class Helmet extends Fragment {
 
     MainActivity activit;
     @Override

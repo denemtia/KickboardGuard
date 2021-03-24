@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 
-public class sensor extends Fragment {
+public class Sensor extends Fragment {
 
     MainActivity activit;
     @Override
