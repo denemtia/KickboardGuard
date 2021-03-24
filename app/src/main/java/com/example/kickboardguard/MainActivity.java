@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
 
 
         // 메뉴 설정 ################################################################################
-        final String[] items = {"Home", "Setting", "GREEN", "BLUE", "BLACK"} ;
+        final String[] items = {"Home", "Setting", "sensor", "BLUE", "BLACK"} ;
         ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, items) ;
         Log.e("getKeyHash", ""+getKeyHash(MainActivity.this));
         listview = (ListView) findViewById(R.id.drawer_menulist) ;
@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
                     case 1 : // Setting
                         getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, settings).commit();
                         break;
-                    case 2 : // BLUE
+                    case 2 : // sensor
 
                         break ;
                     case 3 : // BLACK
