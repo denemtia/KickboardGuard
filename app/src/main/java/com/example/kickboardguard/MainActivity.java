@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
     private static final int GPS_ENABLE_REQUEST_CODE = 2001;
     private static final int PERMISSIONS_REQUEST_CODE = 100;
     String[] REQUIRED_PERMISSIONS  = {Manifest.permission.ACCESS_FINE_LOCATION};
+    private long backBtnTime = 0;//뒤로가기 버튼 누른 횟수
 
 
 
@@ -120,6 +121,19 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
 
 
 
+
+    }
+    @Override
+    public void onBackPressed(){
+        long curTime = System.currentTimeMillis();
+        long gaptime = curTime - backBtnTime;
+        if(0<=gaptime&&2000>=gaptime){
+            super.onBackPressed();
+        }
+        else{
+            backBtnTime=curTime;
+            Toast.makeText(this,"한번 더 누 르면 종료됩니다.",Toast.LENGTH_SHORT).show();
+        }
 
     }
 
@@ -343,5 +357,6 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
         }
         return null;
     }
+
 
 }
