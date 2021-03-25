@@ -8,33 +8,22 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
-import android.graphics.Color;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.view.Menu;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.android.material.navigation.NavigationView;
 
 
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 import net.daum.mf.map.api.MapPoint;
 import net.daum.mf.map.api.MapReverseGeoCoder;
@@ -42,8 +31,6 @@ import net.daum.mf.map.api.MapView;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements net.daum.mf.map.api.MapView.CurrentLocationEventListener, MapReverseGeoCoder.ReverseGeoCodingResultListener {
 
@@ -56,15 +43,30 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
     String[] REQUIRED_PERMISSIONS  = {Manifest.permission.ACCESS_FINE_LOCATION};
 
 
+    private Home home;
+    private Settings settings;
+    private Helmet helmet;
+    private Sensor sensor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final String[] items = {"WHITE", "RED", "GREEN", "BLUE", "BLACK"} ;
+        // 프레그먼트 설정 ##########################################################################
+
+        home = new Home();
+        settings = new Settings();
+        helmet = new Helmet();
+        sensor = new Sensor();
+        // 프레그먼트 설정 ##########################################################################
+
+
+
+
+        // 메뉴 설정 ################################################################################
+        final String[] items = {"Home", "Setting", "sensor", "BLUE", "BLACK"} ;
         ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, items) ;
-        Log.e("getKeyHash", ""+getKeyHash(MainActivity.this));
         listview = (ListView) findViewById(R.id.drawer_menulist) ;
         listview.setAdapter(adapter) ;
 
@@ -73,36 +75,27 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
             public void onItemClick(AdapterView parent, View v, int position, long id) {
 
                 switch (position) {
-                    case 0 : // WHITE
-
+                    case 0 : // Home
+                        getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, home).commit();
+                        break;
+                    case 1 : // Setting
+                        getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, settings).commit();
+                        break;
+                    case 2 : // sensor
+                        getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, sensor).commit();
                         break ;
-                    case 2 : // GREEN
-
-                        break ;
-                    case 3 : // BLUE
-
-                        break ;
-                    case 4 : // BLACK
-
+                    case 3 : // BLACK
+                        getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, helmet).commit();
                         break ;
                 }
-
-                // 코드 계속 ...
-            }
-        });
-
-        listview.setOnItemClickListener(new ListView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView parent, View v, int position, long id) {
-
-                // ... 코드 계속
-
-                // close drawer.
                 DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer) ;
                 drawer.closeDrawer(Gravity.LEFT) ;
             }
         });
+        // 메뉴 설정 ################################################################################
 
+
+        // 카카오 맵 설정 ############################################################################
         mMapView = (net.daum.mf.map.api.MapView) findViewById(R.id.map_view);
         //mMapView.setDaumMapApiKey(MapApiConst.DAUM_MAPS_ANDROID_APP_API_KEY);
         mMapView.setCurrentLocationEventListener(this);
@@ -114,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
 
             checkRunTimePermission();
         }
-
+        // 카카오 맵 설정 ############################################################################
 
 
 
@@ -315,33 +308,6 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
 
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
                 || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-    }
-
-
-
-
-
-    //해쉬키 값 얻기
-    public static String getKeyHash(final Context context) {
-        PackageManager pm = context.getPackageManager();
-        try {
-            PackageInfo packageInfo = pm.getPackageInfo(context.getPackageName(), PackageManager.GET_SIGNATURES);
-            if (packageInfo == null)
-                return null;
-
-            for (Signature signature : packageInfo.signatures) {
-                try {
-                    MessageDigest md = MessageDigest.getInstance("SHA");
-                    md.update(signature.toByteArray());
-                    return android.util.Base64.encodeToString(md.digest(), android.util.Base64.NO_WRAP);
-                } catch (NoSuchAlgorithmException e) {
-                    e.printStackTrace();
-                }
-            }
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
 }
