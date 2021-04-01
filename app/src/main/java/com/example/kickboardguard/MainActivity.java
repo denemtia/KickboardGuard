@@ -2,13 +2,11 @@ package com.example.kickboardguard;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.Signature;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -19,11 +17,16 @@ import android.widget.ListView;
 import android.widget.Toast;
 // 공공 데이터 부분
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.io.BufferedReader;
 import java.io.IOException;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserFactory;
 // 공공 데이터 부분
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -35,13 +38,11 @@ import net.daum.mf.map.api.MapPoint;
 import net.daum.mf.map.api.MapReverseGeoCoder;
 import net.daum.mf.map.api.MapView;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 public class MainActivity extends AppCompatActivity implements net.daum.mf.map.api.MapView.CurrentLocationEventListener, MapReverseGeoCoder.ReverseGeoCodingResultListener {
 
     private static final String LOG_TAG = "MainActivity";
-
+    String html = "http://apis.data.go.kr/B552468/acdntFreqocZone/getAcdntFreqocZone";
     private MapView mMapView;
     ListView listview = null ;
     private static final int GPS_ENABLE_REQUEST_CODE = 2001;
@@ -54,13 +55,11 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
     private Helmet helmet;
     private Sensor sensor;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
-
 
 
 
@@ -71,8 +70,6 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
         helmet = new Helmet();
         sensor = new Sensor();
         // 프레그먼트 설정 ##########################################################################
-
-
 
 
         // 메뉴 설정 ################################################################################
@@ -120,45 +117,45 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
         }
         // 카카오 맵 설정 ############################################################################
 
-
-        // 공공 데이터 설정
-         class ApiExplorer {
-            public void main(String[] args) throws IOException {
-                StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/B552468/acdntFreqocZone/getAcdntFreqocZone"); /*URL*/
-                urlBuilder.append("?" + URLEncoder.encode("sY6y0bVXhsk6jkopIZpTWSZAAXLGLYJB1Tg1O%2B0f%2BcqvmV2Pe9P1Yx7Ne3JolOMxBbHcjEba%2BsXRABa4ZUUtyQ%3D%3D","UTF-8") + "=서비스키"); /*Service Key*/
-                urlBuilder.append("&" + URLEncoder.encode("sY6y0bVXhsk6jkopIZpTWSZAAXLGLYJB1Tg1O%2B0f%2BcqvmV2Pe9P1Yx7Ne3JolOMxBbHcjEba%2BsXRABa4ZUUtyQ%3D%3D","UTF-8") + "=" + URLEncoder.encode("-", "UTF-8")); /*공공데이터포털에서 받은 인증키*/
-                urlBuilder.append("&" + URLEncoder.encode("pageNo","UTF-8") + "=" + URLEncoder.encode("1", "UTF-8")); /*페이지번호*/
-                urlBuilder.append("&" + URLEncoder.encode("numOfRows","UTF-8") + "=" + URLEncoder.encode("10", "UTF-8")); /*한 페이지 결과 수*/
-                urlBuilder.append("&" + URLEncoder.encode("dataType","UTF-8") + "=" + URLEncoder.encode("XML", "UTF-8")); /*결과형식(XML/JSON) Default: XML*/
-                urlBuilder.append("&" + URLEncoder.encode("signguCode","UTF-8") + "=" + URLEncoder.encode("11110", "UTF-8")); /*검색을 원하는 시군구 코드 *시군구 코드 참조*/
-                URL url = new URL(urlBuilder.toString());
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("GET");
-                conn.setRequestProperty("Content-type", "application/json");
-                System.out.println("Response code: " + conn.getResponseCode());
-                BufferedReader rd;
-                if(conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
-                    rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                } else {
-                    rd = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
-                }
-                StringBuilder sb = new StringBuilder();
-                String line;
-                while ((line = rd.readLine()) != null) {
-                    sb.append(line);
-                }
-                rd.close();
-                conn.disconnect();
-                System.out.println(sb.toString());
-            }
+        try {
+            data();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
-
-
     }
 
 
 
+
+    public void data() throws IOException {
+        StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/B552468/acdntFreqocZone"); /*URL*/
+        urlBuilder.append("?" + URLEncoder.encode("ServiceKey","UTF-8") + "=서비스키"); /*Service Key*/
+        urlBuilder.append("&" + URLEncoder.encode("ServiceKey","UTF-8") + "=" + URLEncoder.encode("-", "UTF-8")); /*공공데이터포털에서 받은 인증키*/
+        urlBuilder.append("&" + URLEncoder.encode("pageNo","UTF-8") + "=" + URLEncoder.encode("1", "UTF-8")); /*페이지번호*/
+        urlBuilder.append("&" + URLEncoder.encode("numOfRows","UTF-8") + "=" + URLEncoder.encode("10", "UTF-8")); /*한 페이지 결과 수*/
+        urlBuilder.append("&" + URLEncoder.encode("dataType","UTF-8") + "=" + URLEncoder.encode("XML", "UTF-8")); /*결과형식(XML/JSON) Default: XML*/
+        urlBuilder.append("&" + URLEncoder.encode("signguCode","UTF-8") + "=" + URLEncoder.encode("11110", "UTF-8")); /*검색을 원하는 시군구 코드 *시군구 코드 참조*/
+        URL url = new URL(urlBuilder.toString());
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("GET");
+        conn.setRequestProperty("Content-type", "application/json");
+        System.out.println("Response code: " + conn.getResponseCode());
+        BufferedReader rd;
+        if(conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
+            rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        } else {
+            rd = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+        }
+        StringBuilder sb = new StringBuilder();
+        String line;
+        while ((line = rd.readLine()) != null) {
+            sb.append(line);
+        }
+        rd.close();
+        conn.disconnect();
+        Log.d("data test","************************************");
+        Log.d("data test", sb.toString());
+    }
 
     @Override
     protected void onDestroy() {
@@ -355,3 +352,4 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
     }
 
 }
+
