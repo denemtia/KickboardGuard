@@ -117,13 +117,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
         }
         // 카카오 맵 설정 ############################################################################
 
-        try {
-            data();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
-
 
 
 
