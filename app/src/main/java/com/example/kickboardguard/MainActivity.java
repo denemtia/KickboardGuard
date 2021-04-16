@@ -5,10 +5,11 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.Signature;
+import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -17,8 +18,20 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
+// 공공 데이터 부분
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
-
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserFactory;
+// 공공 데이터 부분
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -28,30 +41,32 @@ import androidx.appcompat.app.AppCompatActivity;
 import net.daum.mf.map.api.MapPoint;
 import net.daum.mf.map.api.MapReverseGeoCoder;
 import net.daum.mf.map.api.MapView;
+import android.media.MediaPlayer;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
-public class MainActivity extends AppCompatActivity implements net.daum.mf.map.api.MapView.CurrentLocationEventListener, MapReverseGeoCoder.ReverseGeoCodingResultListener {
+public class MainActivity extends AppCompatActivity implements net.daum.mf.map.api.MapView.CurrentLocationEventListener, MapReverseGeoCoder.ReverseGeoCodingResultListener, LocationListener {
 
     private static final String LOG_TAG = "MainActivity";
-
+    String html = "http://apis.data.go.kr/B552468/acdntFreqocZone/getAcdntFreqocZone";
     private MapView mMapView;
-    ListView listview = null ;
+    ListView listview = null;
     private static final int GPS_ENABLE_REQUEST_CODE = 2001;
     private static final int PERMISSIONS_REQUEST_CODE = 100;
-    String[] REQUIRED_PERMISSIONS  = {Manifest.permission.ACCESS_FINE_LOCATION};
-
+    String[] REQUIRED_PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION};
 
     private Home home;
     private Settings settings;
     private Helmet helmet;
     private Sensor sensor;
 
+    private LocationManager locationManager;
+    private Location mLastlocation = null;
+    private double speed;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         // 프레그먼트 설정 ##########################################################################
 
@@ -62,34 +77,32 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
         // 프레그먼트 설정 ##########################################################################
 
 
-
-
         // 메뉴 설정 ################################################################################
-        final String[] items = {"Home", "Setting", "sensor", "BLUE", "BLACK"} ;
-        ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, items) ;
-        listview = (ListView) findViewById(R.id.drawer_menulist) ;
-        listview.setAdapter(adapter) ;
+        final String[] items = {"Home", "Setting", "sensor", "BLUE", "BLACK"};
+        ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, items);
+        listview = (ListView) findViewById(R.id.drawer_menulist);
+        listview.setAdapter(adapter);
 
         listview.setOnItemClickListener(new ListView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView parent, View v, int position, long id) {
 
                 switch (position) {
-                    case 0 : // Home
+                    case 0: // Home
                         getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, home).commit();
                         break;
-                    case 1 : // Setting
+                    case 1: // Setting
                         getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, settings).commit();
                         break;
-                    case 2 : // sensor
+                    case 2: // sensor
                         getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, sensor).commit();
-                        break ;
-                    case 3 : // BLACK
+                        break;
+                    case 3: // BLACK
                         getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, helmet).commit();
-                        break ;
+                        break;
                 }
-                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer) ;
-                drawer.closeDrawer(Gravity.LEFT) ;
+                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer);
+                drawer.closeDrawer(Gravity.LEFT);
             }
         });
         // 메뉴 설정 ################################################################################
@@ -103,18 +116,172 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
         if (!checkLocationServicesStatus()) {
 
             showDialogForLocationServiceSetting();
-        }else {
+        } else {
 
             checkRunTimePermission();
         }
         // 카카오 맵 설정 ############################################################################
 
 
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
+        Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        if (lastKnownLocation != null) {
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+            String formatDate = sdf.format(new Date(lastKnownLocation.getTime()));
+        }
+        // GPS 사용 가능 여부 확인
+        boolean isEnable = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, this);
+
+    }
+
+    // 속도 설정 #################################################################################
+    @Override
+    public void onLocationChanged(Location location) {
+        // 속도 설정 #################################################################################
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+        double deltaTime = 0;
+        //권한 체크
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+
+        Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        //  getSpeed() 함수를 이용하여 속도를 계산
+        if (lastKnownLocation != null) {
+            sdf = new SimpleDateFormat("HH:mm:ss");
+            String formatDate = sdf.format(new Date(lastKnownLocation.getTime()));
+            Log.d("Time",formatDate);  //Time
+        }
+        double getSpeed = Double.parseDouble(String.format("%.3f", lastKnownLocation.getSpeed()));
+        Log.d("Get Speed" , String.valueOf(getSpeed));  //Get Speed
+        String formatDate = sdf.format(new Date(lastKnownLocation.getTime()));
+        Log.d("Time",formatDate);  //Time
+
+        // 위치 변경이 두번째로 변경된 경우 계산에 의해 속도 계산
+        if(mLastlocation != null) {
+            //시간 간격
+            deltaTime = (lastKnownLocation.getTime() - mLastlocation.getTime()) / 1000.0;
+            Log.d("Time difference" ,deltaTime + " sec");  // Time Difference
+            Log.d("// Time Difference", mLastlocation.distanceTo(lastKnownLocation) + " m");  // Time Difference
+            // 속도 계산
+            speed = mLastlocation.distanceTo(lastKnownLocation) / deltaTime;
+
+            String formatLastDate = sdf.format(new Date(mLastlocation.getTime()));
+            Log.d("Last Time",formatLastDate);
+
+            double calSpeed = Double.parseDouble(String.format("%.3f", speed));
+            double kmhcalSpeed=3.6*calSpeed;
+            if(kmhcalSpeed>25){
+                Toast.makeText(this.getApplicationContext(),"위험 25km/h 초과했습니다",
+                        Toast.LENGTH_SHORT).show();
+                MediaPlayer player=MediaPlayer.create(this,R.raw.beep);
+                player.start();
+
+
+            }
+            Log.d("Cal Speed", String.valueOf(kmhcalSpeed));
+        }
+        // 현재위치를 지난 위치로 변경
+        mLastlocation = lastKnownLocation;
+
+        // 속도 설정 #################################################################################
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+        //권한 체크
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        // 위치정보 업데이트
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000,0, this);
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //권한 체크
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        // 위치정보 업데이트
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000,0, this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // 위치정보 가져오기 제거
+        locationManager.removeUpdates(this);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            //권한이 없을 경우 최초 권한 요청 또는 사용자에 의한 재요청 확인
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION) &&
+                    ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                // 권한 재요청
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 100);
+                return;
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 100);
+                return;
+            }
+        }
+
+    }
+
+
+    public void data() throws IOException {
+        StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/B552468/acdntFreqocZone"); /*URL*/
+        urlBuilder.append("?" + URLEncoder.encode("ServiceKey","UTF-8") + "=서비스키"); /*Service Key*/
+        urlBuilder.append("&" + URLEncoder.encode("ServiceKey","UTF-8") + "=" + URLEncoder.encode("-", "UTF-8")); /*공공데이터포털에서 받은 인증키*/
+        urlBuilder.append("&" + URLEncoder.encode("pageNo","UTF-8") + "=" + URLEncoder.encode("1", "UTF-8")); /*페이지번호*/
+        urlBuilder.append("&" + URLEncoder.encode("numOfRows","UTF-8") + "=" + URLEncoder.encode("10", "UTF-8")); /*한 페이지 결과 수*/
+        urlBuilder.append("&" + URLEncoder.encode("dataType","UTF-8") + "=" + URLEncoder.encode("XML", "UTF-8")); /*결과형식(XML/JSON) Default: XML*/
+        urlBuilder.append("&" + URLEncoder.encode("signguCode","UTF-8") + "=" + URLEncoder.encode("11110", "UTF-8")); /*검색을 원하는 시군구 코드 *시군구 코드 참조*/
+        URL url = new URL(urlBuilder.toString());
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("GET");
+        conn.setRequestProperty("Content-type", "application/json");
+        System.out.println("Response code: " + conn.getResponseCode());
+        BufferedReader rd;
+        if(conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
+            rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        } else {
+            rd = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+        }
+        StringBuilder sb = new StringBuilder();
+        String line;
+        while ((line = rd.readLine()) != null) {
+            sb.append(line);
+        }
+        rd.close();
+        conn.disconnect();
+        Log.d("data test","************************************");
+        Log.d("data test", sb.toString());
 
 
 
     }
+
+
 
     @Override
     protected void onDestroy() {
@@ -127,6 +294,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
     public void onCurrentLocationUpdate(net.daum.mf.map.api.MapView mapView, MapPoint currentLocation, float accuracyInMeters) {
         MapPoint.GeoCoordinate mapPointGeo = currentLocation.getMapPointGeoCoord();
         Log.i(LOG_TAG, String.format("MapView onCurrentLocationUpdate (%f,%f) accuracy (%f)", mapPointGeo.latitude, mapPointGeo.longitude, accuracyInMeters));
+
     }
 
 
@@ -308,6 +476,9 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
 
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
                 || locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+
     }
 
 }
+
