@@ -29,8 +29,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 // 공공 데이터 부분
@@ -43,7 +41,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import net.daum.mf.map.api.MapPoint;
 import net.daum.mf.map.api.MapReverseGeoCoder;
 import net.daum.mf.map.api.MapView;
-
+import android.media.MediaPlayer;
 
 public class MainActivity extends AppCompatActivity implements net.daum.mf.map.api.MapView.CurrentLocationEventListener, MapReverseGeoCoder.ReverseGeoCodingResultListener, LocationListener {
 
@@ -175,7 +173,16 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
             Log.d("Last Time",formatLastDate);
 
             double calSpeed = Double.parseDouble(String.format("%.3f", speed));
-            Log.d("Cal Speed", String.valueOf(calSpeed));
+            double kmhcalSpeed=3.6*calSpeed;
+            if(kmhcalSpeed>25){
+                Toast.makeText(this.getApplicationContext(),"위험 25km/h 초과했습니다",
+                        Toast.LENGTH_SHORT).show();
+                MediaPlayer player=MediaPlayer.create(this,R.raw.beep);
+                player.start();
+
+
+            }
+            Log.d("Cal Speed", String.valueOf(kmhcalSpeed));
         }
         // 현재위치를 지난 위치로 변경
         mLastlocation = lastKnownLocation;
