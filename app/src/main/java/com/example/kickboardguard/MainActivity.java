@@ -6,11 +6,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -38,6 +40,7 @@ import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
+import net.daum.mf.map.api.MapCircle;
 import net.daum.mf.map.api.MapPoint;
 import net.daum.mf.map.api.MapReverseGeoCoder;
 import net.daum.mf.map.api.MapView;
@@ -66,6 +69,8 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
 
 
         // 프레그먼트 설정 ##########################################################################
@@ -134,6 +139,169 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
         boolean isEnable = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, this);
+
+
+
+        // 공공 데이터 ##############################################################################
+        StrictMode.enableDefaults();
+
+
+        boolean inresultCode = false, inresultMsg = false, intotalCount = false, innumOfRows = false, inpageNo = false;
+        boolean infreqocZoneVer = false, infreqocZoneId = false, infreqocZoneNm = false, insignguCode = false, insignguNm=false;
+        boolean inacdntCo = false, incenterX= false , incenterY = false , inzoneRds = false;
+
+        String resultCode = null, resultMsg = null, totalCount = null, numOfRows = null, pageNo = null, freqocZoneVer=null, freqocZoneId=null, freqocZoneNm=null;
+        String signguCode = null, signguNm = null, acdntCo = null, centerX = null, centerY = null, zoneRds = null;
+
+
+        try{
+            URL url = new URL("http://apis.data.go.kr/B552468/acdntFreqocZone/getAcdntFreqocZone?" +
+                    "serviceKey=sY6y0bVXhsk6jkopIZpTWSZAAXLGLYJB1Tg1O%2B0f%2BcqvmV2Pe9P1Yx7Ne3JolOMxBbHcjEba%2BsXRABa4ZUUtyQ%3D%3D" +       //서비스키
+                    "&numOfRows=100" +           //한 페이지 결과 수
+                    "&pageNo=1" +               //페이지 번호
+                    "&signguCode=46110" +       //시군구코드
+                    "&datatype=XML"             //데이터 유형
+            ); //검색 URL부분
+
+            XmlPullParserFactory parserCreator = XmlPullParserFactory.newInstance();
+            XmlPullParser parser = parserCreator.newPullParser();
+
+            parser.setInput(url.openStream(), null);
+
+            int parserEvent = parser.getEventType();
+            System.out.println("파싱시작합니다.");
+
+            while (parserEvent != XmlPullParser.END_DOCUMENT){
+                switch(parserEvent){
+                    case XmlPullParser.START_TAG://parser가 시작 태그를 만나면 실행
+                        if(parser.getName().equals("resultCode")){ //title 만나면 내용을 받을수 있게 하자
+                            inresultCode = true;
+                        }
+                        if(parser.getName().equals("resultMsg")){ //address 만나면 내용을 받을수 있게 하자
+                            inresultMsg = true;
+                        }
+                        if(parser.getName().equals("totalCount")){ //mapx 만나면 내용을 받을수 있게 하자
+                            intotalCount = true;
+                        }
+                        if(parser.getName().equals("numOfRows")){ //mapy 만나면 내용을 받을수 있게 하자
+                            innumOfRows = true;
+                        }
+                        if(parser.getName().equals("pageNo")){ //mapy 만나면 내용을 받을수 있게 하자
+                            inpageNo = true;
+                        }
+                        if(parser.getName().equals("freqocZoneVer")){ //mapy 만나면 내용을 받을수 있게 하자
+                            infreqocZoneVer = true;
+                        }
+                        if(parser.getName().equals("freqocZoneId")){ //mapy 만나면 내용을 받을수 있게 하자
+                            infreqocZoneId = true;
+                        }
+                        if(parser.getName().equals("freqocZoneNm")){ //mapy 만나면 내용을 받을수 있게 하자
+                            infreqocZoneNm = true;
+                        }
+                        if(parser.getName().equals("signguCode")){ //mapy 만나면 내용을 받을수 있게 하자
+                            insignguCode = true;
+                        }
+                        if(parser.getName().equals("signguNm")){ //mapy 만나면 내용을 받을수 있게 하자
+                            insignguNm = true;
+                        }
+                        if(parser.getName().equals("acdntCo")){ //mapy 만나면 내용을 받을수 있게 하자
+                            inacdntCo = true;
+                        }
+                        if(parser.getName().equals("centerX")) { //mapy 만나면 내용을 받을수 있게 하자
+                            incenterX = true;
+                        }
+                        if(parser.getName().equals("centerY")) { //mapy 만나면 내용을 받을수 있게 하자
+                            incenterY = true;
+                        }
+                        if(parser.getName().equals("zoneRds")) { //mapy 만나면 내용을 받을수 있게 하자
+                            inzoneRds = true;
+                        }
+                        if(parser.getName().equals("resultMsg")){ //message 태그를 만나면 에러 출력
+                            Log.i("에러 :", resultMsg+ "에러");
+                            //여기에 에러코드에 따라 다른 메세지를 출력하도록 할 수 있다.
+                        }
+                        break;
+
+                    case XmlPullParser.TEXT://parser가 내용에 접근했을때
+                        if(intotalCount){ //isTitle이 true일 때 태그의 내용을 저장.
+                            totalCount = parser.getText();
+                            intotalCount = false;
+                        }
+                        if(innumOfRows){ //isAddress이 true일 때 태그의 내용을 저장.
+                            numOfRows = parser.getText();
+                            innumOfRows = false;
+                        }
+                        if(inpageNo){ //isMapx이 true일 때 태그의 내용을 저장.
+                            pageNo = parser.getText();
+                            inpageNo = false;
+                        }
+                        if(infreqocZoneVer){ //isMapy이 true일 때 태그의 내용을 저장.
+                            freqocZoneVer = parser.getText();
+                            infreqocZoneVer = false;
+                        }
+                        if(infreqocZoneId){ //isMapy이 true일 때 태그의 내용을 저장.
+                            freqocZoneId = parser.getText();
+                            infreqocZoneId = false;
+                        }
+                        if(infreqocZoneNm){ //isMapy이 true일 때 태그의 내용을 저장.
+                            freqocZoneNm = parser.getText();
+                            infreqocZoneNm = false;
+                        }
+                        if(insignguCode){ //isMapy이 true일 때 태그의 내용을 저장.
+                            signguCode = parser.getText();
+                            insignguCode = false;
+                        }
+                        if(insignguNm){ //isMapy이 true일 때 태그의 내용을 저장.
+                            signguNm = parser.getText();
+                            insignguNm = false;
+                        }
+                        if(inacdntCo){ //isMapy이 true일 때 태그의 내용을 저장.
+                            acdntCo = parser.getText();
+                            inacdntCo = false;
+                        }
+                        if(incenterX){ //isMapy이 true일 때 태그의 내용을 저장.
+                            centerX = parser.getText();
+                            incenterX = false;
+                        }
+                        if(incenterY){ //isMapy이 true일 때 태그의 내용을 저장.
+                            centerY = parser.getText();
+                            incenterY = false;
+                        }
+                        if(inzoneRds){ //isMapy이 true일 때 태그의 내용을 저장.
+                            zoneRds = parser.getText();
+                            inzoneRds = false;
+                        }
+                        break;
+                    case XmlPullParser.END_TAG:
+                        if(parser.getName().equals("item")){
+                            Log.d("data","총건수 : "+ totalCount +"\n 한 페이지 결과수: "+ numOfRows +"\n 페이지  번호 : " + pageNo
+                                    +"\n 다발구역버전 : " + freqocZoneVer +  "\n 다발구역아이디 : " + freqocZoneId+ "\n 다발구역명 : " + freqocZoneNm
+                                    +"\n 시군구코드 : " +signguCode + "\n 시군구명 : " + signguNm + "\n 사고건수 : " +acdntCo
+                                    +"\n 중심X : " +centerX +"\n 중심Y : " +centerY+"\n"+"\n 구역반경 : " +zoneRds+"\n");
+
+
+                            MapCircle circle = new MapCircle(
+                                    MapPoint.mapPointWithGeoCoord(Double.parseDouble(centerY), Double.parseDouble(centerX)), // center
+                                    Integer.parseInt(zoneRds), // radius
+                                    Color.argb(128, 255, 0, 0), // strokeColor
+                                    Color.argb(128, 0, 255, 0) // fillColor
+                            );
+                            //circle.setTag(Integer.parseInt(freqocZoneId));
+                            mMapView.addCircle(circle);
+
+                        }
+                        break;
+                }
+                parserEvent = parser.next();
+            }
+        } catch(Exception e){
+            Log.i("에러","에러발생");
+        }
+        // 공공 데이터 ##############################################################################
+
+
+
+
 
     }
 
