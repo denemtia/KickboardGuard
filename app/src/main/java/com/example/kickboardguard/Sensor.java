@@ -152,11 +152,8 @@ public class Sensor extends Fragment {
                                         public void run(){
                                             System.out.println(getnum);
                                             if(getnum<100){
-                                                //Vibrator vibrator=(Vibrator)getSystemService(Context.VIBRATOR_SERVICE); // 진동 설정
-                                                //vibrator.vibrate(1000);// 진동 울림
-                                                // MediaPlayer p = MediaPlayer.create(,R.raw.beep);
-                                                //p.start();
-
+                                               MainActivity mainAct=new MainActivity();
+                                               mainAct.player.start();
                                             }
                                             Log.i("적외선 데이터", data);
                                             //mEditReceive.setText(mEditReceive.getText().toString()
