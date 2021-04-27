@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
                     case 2: // sensor
                         getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, sensor).commit();
                         break;
-                    case 3: // BLACK
+                    case 3: // Helmet
                         getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, helmet).commit();
                         break;
                 }
@@ -111,6 +111,8 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
             }
         });
         // 메뉴 설정 ################################################################################
+
+
 
 
         // 카카오 맵 설정 ############################################################################
@@ -126,6 +128,9 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
             checkRunTimePermission();
         }
         // 카카오 맵 설정 ############################################################################
+
+
+
 
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
