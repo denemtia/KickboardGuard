@@ -47,7 +47,7 @@ import net.daum.mf.map.api.MapView;
 import android.media.MediaPlayer;
 
 public class MainActivity extends AppCompatActivity implements net.daum.mf.map.api.MapView.CurrentLocationEventListener, MapReverseGeoCoder.ReverseGeoCodingResultListener, LocationListener {
-    MediaPlayer player=MediaPlayer.create(this,R.raw.beep);
+
     private static final String LOG_TAG = "MainActivity";
     String html = "http://apis.data.go.kr/B552468/acdntFreqocZone/getAcdntFreqocZone";
     private MapView mMapView;
@@ -64,6 +64,9 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
     private LocationManager locationManager;
     private Location mLastlocation = null;
     private double speed;
+    private long backbtntime=0;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -309,6 +312,20 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
 
 
     }
+    @Override
+    public void onBackPressed() {
+        long curTime=System.currentTimeMillis();
+        long gapTime=curTime-backbtntime;
+
+        if(0<=gapTime&&2000>=gapTime) {
+            super.onBackPressed();
+        }
+        else{
+            backbtntime=curTime;
+            Toast.makeText(this,"한번 더 누르면 종료됩니다",Toast.LENGTH_SHORT).show();
+
+        }
+    }
 
     // 속도 설정 #################################################################################
     @Override
@@ -350,7 +367,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
             if(kmhcalSpeed>25){
                 Toast.makeText(this.getApplicationContext(),"위험 25km/h 초과했습니다",
                         Toast.LENGTH_SHORT).show();
-
+                MediaPlayer player=MediaPlayer.create(this,R.raw.beep);
                 player.start();
 
 

@@ -1,11 +1,15 @@
 package com.example.kickboardguard;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.SoundPool;
 import android.os.Bundle;
 
 
@@ -152,8 +156,10 @@ public class Sensor extends Fragment {
                                         public void run(){
                                             System.out.println(getnum);
                                             if(getnum<100){
-                                               MainActivity mainAct=new MainActivity();
-                                               mainAct.player.start();
+                                                Context c = getContext();
+                                                MediaPlayer m = MediaPlayer.create(c , R.raw.siren );
+                                                m.start();
+
                                             }
                                             Log.i("적외선 데이터", data);
                                             //mEditReceive.setText(mEditReceive.getText().toString()
