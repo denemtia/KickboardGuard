@@ -108,6 +108,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
                     case 3: // Helmet
                         getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, helmet).commit();
                         break;
+
                 }
                 DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer);
                 drawer.closeDrawer(Gravity.LEFT);
@@ -669,6 +670,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
 
 
     }
+
 
 }
 
