@@ -1,23 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Sensor"
-    android:background="#33FF33">
+    android:gravity="center"
+    android:orientation="vertical"
+    tools:context=".Sensor">
+
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_x="15dp"
+        android:layout_y="11dp"
         android:text="Seneor"
         android:textSize="50dp" />
 
-    <Button
-        android:id="@+id/BTon_button"
+    <TextView
+        android:id="@+id/tvShowNumbers"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Button" />
+        android:layout_margin="10dp"
+        android:layout_x="134dp"
+        android:layout_y="190dp"
+        android:text="Numbers"
+        android:textSize="25sp" />
+
+    <NumberPicker
+        android:id="@+id/numberPicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:layout_x="160dp"
+        android:layout_y="251dp" />
+
+    <Button
+        android:id="@+id/BTon_button"
+        android:layout_width="128dp"
+        android:layout_height="98dp"
+        android:layout_x="134dp"
+        android:layout_y="445dp"
+        android:text="Blutooth" />
 
 
-</FrameLayout>
+</LinearLayout>

@@ -7,12 +7,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.media.ToneGenerator;
 import android.os.Bundle;
 
 
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
@@ -22,6 +24,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.NumberPicker;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,8 +41,11 @@ import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 import static androidx.core.content.ContextCompat.getSystemService;
 
+import android.widget.NumberPicker;
+import android.widget.TextView;
+import android.widget.NumberPicker.OnValueChangeListener;
 
-public class Sensor extends Fragment {
+public class Sensor extends Fragment implements NumberPicker.OnValueChangeListener{
 
 
     static final int REQUEST_ENABLE_BT = 10;
@@ -62,7 +68,8 @@ public class Sensor extends Fragment {
     ScrollView scrolldata;              // 스크롤뷰 선언
 
     MainActivity activit;
-
+    public TextView tvShowNumbers;
+    Context ct;
 
 
     @Override
@@ -84,15 +91,23 @@ public class Sensor extends Fragment {
 
         }
 
+
+
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        ct = container.getContext();
         // Inflate the layout for this fragment
 
         View view = inflater.inflate(R.layout.fragment_sensor,container,false);
         Button bton_button = (Button) view.findViewById(R.id.BTon_button);
+        NumberPicker numberPicker = view.findViewById(R.id.numberPicker);
+        numberPicker.setMinValue(1500);
+        numberPicker.setMaxValue(2000);
+
         bton_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -107,7 +122,9 @@ public class Sensor extends Fragment {
         //return inflater.inflate(R.layout.fragment_sensor, container, false);
     }
 
+    public void onValueChange(NumberPicker numberPicker, int i, int i1) {
 
+    }
     BluetoothDevice getDeviceFromBondedList(String name){
         BluetoothDevice selectedDevice = null;
         for (BluetoothDevice device : mDevices) {
