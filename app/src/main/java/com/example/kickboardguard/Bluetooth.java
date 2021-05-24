@@ -3,9 +3,17 @@ package com.example.kickboardguard;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+
+import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.SoundPool;
 import android.os.Bundle;
 
 
@@ -37,23 +45,27 @@ import static android.app.Activity.RESULT_OK;
 import static androidx.core.content.ContextCompat.getSystemService;
 
 
-public class Sensor extends Fragment {
+public class Bluetooth extends Fragment  {
 
+    int mPairedDeviceCount = 0;
+
+    int limit = 0;                  //센서 위험 한계값 설정
 
     static final int REQUEST_ENABLE_BT = 10;
-    int mPairedDeviceCount = 0;
-    int limit = 0;                  //센서 위험 한계값 설정
     Set<BluetoothDevice> mDevices;
     BluetoothAdapter mBluetoothAdapter;
     BluetoothDevice mRemoteDevice;
     BluetoothSocket mSocket = null;
     OutputStream mOutputStream = null;
     InputStream mInputStream = null;
-    String mStrDelimiter = "\n";
-    char mCharDelimiter = '\n';
     Thread mWorkerThread = null;
     byte[] readBuffer;
     int readBufferPosition;
+
+    String mStrDelimiter = "\n";
+    char mCharDelimiter = '\n';
+
+
     //EditText mEditReceive, mEditSend;
     TextView mEditReceive, mEditSend;
     Button mButtonSend;
@@ -61,11 +73,15 @@ public class Sensor extends Fragment {
 
 
 
+
+
     MainActivity activit;
+
     @Override
     public void onAttach(Context context){
         super.onAttach(context);
         activit = (MainActivity)getActivity();
+
     }
 
     @Override
@@ -79,6 +95,83 @@ public class Sensor extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
 
+        }
+    }
+    void checkBluetooth(){ //블루투스 활성화
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if(mBluetoothAdapter == null){
+            Toast.makeText(activit.getApplicationContext(), "기기가 블루투스를 지원하지 않습니다.", Toast.LENGTH_LONG).show();
+            activit.finish();
+        }
+        else {
+            if (!mBluetoothAdapter.isEnabled()) {
+                Toast.makeText(activit.getApplicationContext(), "현재 블루투스가 비활성 상태입니다.", Toast.LENGTH_LONG).show();
+                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+            }
+            else
+                selectDevice();
+        }
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) { //블루투스를 지원하지 않을때
+        switch(requestCode){
+            case REQUEST_ENABLE_BT:
+                if(resultCode == RESULT_OK){
+                    selectDevice();
+                }
+                else if(resultCode == RESULT_CANCELED){
+                    Toast.makeText(activit.getApplicationContext(), "블루투스를 사용할 수 없어 프로그램을 종료합니다.",
+                            Toast.LENGTH_LONG).show();
+                    activit.finish();
+                }
+                break;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+    void selectDevice() {
+        mDevices = mBluetoothAdapter.getBondedDevices();
+        mPairedDeviceCount = mDevices.size();
+        if (mPairedDeviceCount == 0) {
+            Toast.makeText(activit.getApplicationContext(), "페어링된 장치가 없습니다.", Toast.LENGTH_LONG).show();
+            activit.finish();
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(activit);
+        builder.setTitle("블루투스 장치 선택");
+        List<String> listItems = new ArrayList<String>();
+        for (BluetoothDevice device : mDevices) {
+            listItems.add(device.getName());
+        }
+        listItems.add("취소");
+        final CharSequence[] items =
+                listItems.toArray(new CharSequence[listItems.size()]);
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int item) {
+                if (item == mPairedDeviceCount) {
+                    Toast.makeText(activit.getApplicationContext(), "연결할 장치를 선택하지 않았습니다.", Toast.LENGTH_LONG).show();
+                    activit.finish();
+                } else {
+                    connectToSelectedDevice(items[item].toString());
+                }
+            }
+        });
+        builder.setCancelable(false);
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    void connectToSelectedDevice(String selectedDeviceName){
+        mRemoteDevice = getDeviceFromBondedList(selectedDeviceName);
+        UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
+        try{
+            mSocket = mRemoteDevice.createRfcommSocketToServiceRecord(uuid);
+            mSocket.connect();
+            mOutputStream = mSocket.getOutputStream();
+            mInputStream = mSocket.getInputStream();
+            beginListenForData();
+        }catch(Exception e){
+            Toast.makeText(activit.getApplicationContext(), "블루투스 연결 중 오류가 발생했습니다.", Toast.LENGTH_LONG).show();
+            activit.finish();
         }
     }
 
@@ -111,20 +204,8 @@ public class Sensor extends Fragment {
             activit.finish();
         }
     }
-    void connectToSelectedDevice(String selectedDeviceName){
-        mRemoteDevice = getDeviceFromBondedList(selectedDeviceName);
-        UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
-        try{
-            mSocket = mRemoteDevice.createRfcommSocketToServiceRecord(uuid);
-            mSocket.connect();
-            mOutputStream = mSocket.getOutputStream();
-            mInputStream = mSocket.getInputStream();
-            beginListenForData();
-        }catch(Exception e){
-            Toast.makeText(activit.getApplicationContext(), "블루투스 연결 중 오류가 발생했습니다.", Toast.LENGTH_LONG).show();
-            activit.finish();
-        }
-    }
+
+
     void beginListenForData(){
         final Handler handler = new Handler();
         readBufferPosition = 0;
@@ -150,14 +231,7 @@ public class Sensor extends Fragment {
                                     readBufferPosition = 0;
                                     handler.post(new Runnable(){
                                         public void run(){
-                                            System.out.println(getnum);
-                                            if(getnum<100){
-                                                //Vibrator vibrator=(Vibrator)getSystemService(Context.VIBRATOR_SERVICE); // 진동 설정
-                                                //vibrator.vibrate(1000);// 진동 울림
-                                                // MediaPlayer p = MediaPlayer.create(,R.raw.beep);
-                                                //p.start();
 
-                                            }
                                             Log.i("적외선 데이터", data);
                                             //mEditReceive.setText(mEditReceive.getText().toString()
                                             //+ data + mStrDelimiter);
@@ -180,68 +254,6 @@ public class Sensor extends Fragment {
         });
         mWorkerThread.start();
     }
-    void selectDevice(){
-        mDevices = mBluetoothAdapter.getBondedDevices();
-        mPairedDeviceCount = mDevices.size();
-        if(mPairedDeviceCount == 0){
-            Toast.makeText(activit.getApplicationContext(), "페어링된 장치가 없습니다.", Toast.LENGTH_LONG).show();
-            activit.finish();
-        }
-        AlertDialog.Builder builder = new AlertDialog.Builder(activit);
-        builder.setTitle("블루투스 장치 선택");
-        List<String> listItems = new ArrayList<String>();
-        for (BluetoothDevice device : mDevices) {
-            listItems.add(device.getName());
-        }
-        listItems.add("취소");
-        final CharSequence[] items =
-                listItems.toArray(new CharSequence[listItems.size()]);
-        builder.setItems(items, new DialogInterface.OnClickListener(){
-            public void onClick(DialogInterface dialog, int item){
-                if(item == mPairedDeviceCount){
-                    Toast.makeText(activit.getApplicationContext(), "연결할 장치를 선택하지 않았습니다.", Toast.LENGTH_LONG).show();
-                    activit.finish();
-                }
-                else{
-                    connectToSelectedDevice(items[item].toString());
-                }
-            }
-        });
-        builder.setCancelable(false);
-        AlertDialog alert = builder.create();
-        alert.show();
-    }
-    void checkBluetooth(){
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if(mBluetoothAdapter == null){
-            Toast.makeText(activit.getApplicationContext(), "기기가 블루투스를 지원하지 않습니다.", Toast.LENGTH_LONG).show();
-            activit.finish();
-        }
-        else {
-            if (!mBluetoothAdapter.isEnabled()) {
-                Toast.makeText(activit.getApplicationContext(), "현재 블루투스가 비활성 상태입니다.", Toast.LENGTH_LONG).show();
-                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-            }
-            else
-                selectDevice();
-        }
-    }
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch(requestCode){
-            case REQUEST_ENABLE_BT:
-                if(resultCode == RESULT_OK){
-                    selectDevice();
-                }
-                else if(resultCode == RESULT_CANCELED){
-                    Toast.makeText(activit.getApplicationContext(), "블루투스를 사용할 수 없어 프로그램을 종료합니다.",
-                            Toast.LENGTH_LONG).show();
-                    activit.finish();
-                }
-                break;
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-
 }
+
+
