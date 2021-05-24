@@ -6,6 +6,8 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.ToneGenerator;
 import android.os.Bundle;
 
 
@@ -151,16 +153,12 @@ public class Sensor extends Fragment {
                                     handler.post(new Runnable(){
                                         public void run(){
                                             System.out.println(getnum);
-                                            if(getnum<100){
-                                                //Vibrator vibrator=(Vibrator)getSystemService(Context.VIBRATOR_SERVICE); // 진동 설정
-                                                //vibrator.vibrate(1000);// 진동 울림
-                                                // MediaPlayer p = MediaPlayer.create(,R.raw.beep);
-                                                //p.start();
+                                            if(getnum<1500){
+                                                ToneGenerator tone= new ToneGenerator(AudioManager.STREAM_MUSIC,ToneGenerator.MAX_VOLUME);
+                                                tone.startTone(ToneGenerator.TONE_DTMF_C,500);
 
                                             }
                                             Log.i("적외선 데이터", data);
-                                            //mEditReceive.setText(mEditReceive.getText().toString()
-                                            //+ data + mStrDelimiter);
 
                                         }
                                     });
