@@ -350,7 +350,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
             if(kmhcalSpeed>25){
                 Toast.makeText(this.getApplicationContext(),"위험 25km/h 초과했습니다",
                         Toast.LENGTH_SHORT).show();
-                MediaPlayer player=MediaPlayer.create(this,R.raw.beep);
+                MediaPlayer player=MediaPlayer.create(this,R.raw.siren);
                 player.start();
 
 

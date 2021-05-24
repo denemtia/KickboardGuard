@@ -7,7 +7,7 @@
     <item>
         <bitmap
 
-            android:src="@drawable/kb1"
+            android:src="@drawable/kbg"
             android:gravity="center"/>
     </item>
 </layer-list>
