@@ -61,9 +61,10 @@ public class Sensor extends Fragment {
     Button mButtonSend;
     ScrollView scrolldata;              // 스크롤뷰 선언
 
-
-
     MainActivity activit;
+
+
+
     @Override
     public void onAttach(Context context){
         super.onAttach(context);
@@ -82,6 +83,7 @@ public class Sensor extends Fragment {
         if (getArguments() != null) {
 
         }
+
     }
 
     @Override
@@ -89,8 +91,20 @@ public class Sensor extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-        checkBluetooth();
-        return inflater.inflate(R.layout.fragment_sensor, container, false);
+        View view = inflater.inflate(R.layout.fragment_sensor,container,false);
+        Button bton_button = (Button) view.findViewById(R.id.BTon_button);
+        bton_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                checkBluetooth();
+            }
+        });
+
+
+
+
+        return view;
+        //return inflater.inflate(R.layout.fragment_sensor, container, false);
     }
 
 

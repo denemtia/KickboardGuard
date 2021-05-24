@@ -67,7 +67,6 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
     private long backbtntime=0;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

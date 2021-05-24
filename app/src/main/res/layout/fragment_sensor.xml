@@ -13,5 +13,11 @@
         android:text="Seneor"
         android:textSize="50dp" />
 
+    <Button
+        android:id="@+id/BTon_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Button" />
+
 
 </FrameLayout>
