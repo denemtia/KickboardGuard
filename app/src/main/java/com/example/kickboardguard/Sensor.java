@@ -96,6 +96,7 @@ public class Sensor extends Fragment {
         bton_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 checkBluetooth();
             }
         });
