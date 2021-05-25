@@ -25,6 +25,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.NumberPicker;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -70,6 +72,7 @@ public class Sensor extends Fragment implements NumberPicker.OnValueChangeListen
     MainActivity activit;
     public TextView tvShowNumbers;
     Context ct;
+    int getlimit;
 
 
     @Override
@@ -99,20 +102,38 @@ public class Sensor extends Fragment implements NumberPicker.OnValueChangeListen
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ct = container.getContext();
         // Inflate the layout for this fragment
 
         View view = inflater.inflate(R.layout.fragment_sensor,container,false);
+        final RadioGroup rg = (RadioGroup)view.findViewById(R.id.radioGroup1);
+        Button b = (Button)view.findViewById(R.id.button1);
+        final TextView tv = (TextView)view.findViewById(R.id.textView2);
+
+        출처: https://bitsoul.tistory.com/47 [Happy Programmer~]
+        b.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int id = rg.getCheckedRadioButtonId();
+                //getCheckedRadioButtonId() 의 리턴값은 선택된 RadioButton 의 id 값.
+                RadioButton rb = (RadioButton)view.findViewById(id);
+                String rbstring=rb.getText().toString();
+                String getlimits=rbstring.trim();
+                getlimit=Integer.parseInt(getlimits);
+                tv.setText("결과: " +getlimits);
+
+            } // end onClick()
+        });  // end Listener
+
+
         Button bton_button = (Button) view.findViewById(R.id.BTon_button);
-        NumberPicker numberPicker = view.findViewById(R.id.numberPicker);
-        numberPicker.setMinValue(1500);
-        numberPicker.setMaxValue(2000);
 
         bton_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 checkBluetooth();
             }
+
+
         });
 
 
@@ -184,7 +205,7 @@ public class Sensor extends Fragment implements NumberPicker.OnValueChangeListen
                                     handler.post(new Runnable(){
                                         public void run(){
                                             System.out.println(getnum);
-                                            if(getnum<1500){
+                                            if(getnum<getlimit){
                                                 ToneGenerator tone= new ToneGenerator(AudioManager.STREAM_MUSIC,ToneGenerator.MAX_VOLUME);
                                                 tone.startTone(ToneGenerator.TONE_DTMF_C,500);
 
@@ -272,5 +293,6 @@ public class Sensor extends Fragment implements NumberPicker.OnValueChangeListen
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
+
 
 }
