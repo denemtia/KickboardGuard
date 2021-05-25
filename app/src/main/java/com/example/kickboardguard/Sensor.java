@@ -109,7 +109,6 @@ public class Sensor extends Fragment implements NumberPicker.OnValueChangeListen
         Button b = (Button)view.findViewById(R.id.button1);
         final TextView tv = (TextView)view.findViewById(R.id.textView2);
 
-        출처: https://bitsoul.tistory.com/47 [Happy Programmer~]
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
