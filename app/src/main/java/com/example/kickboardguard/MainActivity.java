@@ -74,7 +74,6 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
 
 
 
-
         // 프레그먼트 설정 ##########################################################################
 
         home = new Home();
@@ -99,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
                         getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, home).commit();
                         break;
                     case 1: // Setting
-                        getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, settings).commit();
+                        getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, new Settings()).commit();
                         break;
                     case 2: // sensor
                         getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, sensor).commit();
