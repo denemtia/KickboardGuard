@@ -85,6 +85,16 @@ public class Helmet extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_helmet,container,false);
+
+        Button bton_button = (Button) view.findViewById(R.id.BTon_button);
+        bton_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                checkBluetooth();
+            }
+        });
+
         Button on_button = (Button) view.findViewById(R.id.helmet_on);
         on_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,6 +113,7 @@ public class Helmet extends Fragment {
                 }
             }
         });
+
         Button off_button = (Button) view.findViewById(R.id.helmet_off);
         off_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -191,18 +202,18 @@ public class Helmet extends Fragment {
                                     byte[] encodedBytes = new byte[readBufferPosition];
                                     System.arraycopy(readBuffer, 0,
                                             encodedBytes, 0, encodedBytes.length);
-                                    final String data = new String(encodedBytes, "US-ASCII");
-                                    String data2= data.trim();// data2에 data의 개행문자를 제거한 값을 넘겨줌
-                                    double getnum = Double.parseDouble(data2); // getnum에 data2를 double 형식으로 바꿔서 값을 넘겨줌
+                                    //final String data = new String(encodedBytes, "US-ASCII");
+                                    //String data2= data.trim();// data2에 data의 개행문자를 제거한 값을 넘겨줌
+                                    //double getnum = Double.parseDouble(data2); // getnum에 data2를 double 형식으로 바꿔서 값을 넘겨줌
                                     readBufferPosition = 0;
                                     handler.post(new Runnable(){
                                         public void run(){
-                                            System.out.println(getnum);
-                                            if(getnum<1500){
+                                           // System.out.println(getnum);
+                                            /*if(getnum<1500){
                                                 ToneGenerator tone= new ToneGenerator(AudioManager.STREAM_MUSIC,ToneGenerator.MAX_VOLUME);
                                                 tone.startTone(ToneGenerator.TONE_DTMF_C,500);
-                                            }
-
+                                                  }
+                                             */
                                         }
                                     });
                                 }
