@@ -46,8 +46,9 @@ import static androidx.core.content.ContextCompat.getSystemService;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.NumberPicker.OnValueChangeListener;
+import android.widget.ToggleButton;
 
-public class Sensor extends Fragment implements NumberPicker.OnValueChangeListener{
+public class Sensor extends Fragment {
 
 
     static final int REQUEST_ENABLE_BT = 10;
@@ -124,12 +125,17 @@ public class Sensor extends Fragment implements NumberPicker.OnValueChangeListen
         });  // end Listener
 
 
-        Button bton_button = (Button) view.findViewById(R.id.BTon_button);
+        ToggleButton bton_button = (ToggleButton) view.findViewById(R.id.BTon_button);
 
         bton_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                checkBluetooth();
+                if(bton_button.isChecked()){
+                checkBluetooth();}
+                else{
+                    bluetoothOff();
+
+                }
             }
 
 
@@ -142,9 +148,7 @@ public class Sensor extends Fragment implements NumberPicker.OnValueChangeListen
         //return inflater.inflate(R.layout.fragment_sensor, container, false);
     }
 
-    public void onValueChange(NumberPicker numberPicker, int i, int i1) {
 
-    }
     BluetoothDevice getDeviceFromBondedList(String name){
         BluetoothDevice selectedDevice = null;
         for (BluetoothDevice device : mDevices) {
@@ -228,6 +232,9 @@ public class Sensor extends Fragment implements NumberPicker.OnValueChangeListen
             }
         });
         mWorkerThread.start();
+    }
+    public void bluetoothOff(){
+        mBluetoothAdapter.disable();
     }
     void selectDevice(){
         mDevices = mBluetoothAdapter.getBondedDevices();

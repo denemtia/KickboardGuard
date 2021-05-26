@@ -77,12 +77,14 @@
         android:text="선택" />
 
 
-    <Button
+    <ToggleButton
         android:id="@+id/BTon_button"
         android:layout_width="128dp"
         android:layout_height="98dp"
-        android:layout_x="134dp"
-        android:layout_y="445dp"
+        android:layout_x="100dp"
+        android:layout_y="200dp"
+        android:textOn="블루투스 ON"
+        android:textOff="블루투스 OFF"
         android:text="Blutooth" />
     <TextView
         android:id="@+id/textView2"
