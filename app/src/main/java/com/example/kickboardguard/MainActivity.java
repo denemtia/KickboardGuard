@@ -39,6 +39,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import net.daum.mf.map.api.MapCircle;
 import net.daum.mf.map.api.MapPoint;
@@ -57,9 +59,9 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
     String[] REQUIRED_PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION};
 
     private Home home;
-    private Settings settings;
     private Helmet helmet;
     private Sensor sensor;
+    private Myload myload;
 
     private LocationManager locationManager;
     private Location mLastlocation = null;
@@ -73,18 +75,17 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
         setContentView(R.layout.activity_main);
 
 
-
         // 프레그먼트 설정 ##########################################################################
 
         home = new Home();
-        settings = new Settings();
         helmet = new Helmet();
         sensor = new Sensor();
+        myload = new Myload();
         // 프레그먼트 설정 ##########################################################################
 
 
         // 메뉴 설정 ################################################################################
-        final String[] items = {"Home", "Setting", "sensor", "BLUE", "BLACK"};
+        final String[] items = {"홈", "설정", "후방감지", "헬멧","내경로"};
         ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, items);
         listview = (ListView) findViewById(R.id.drawer_menulist);
         listview.setAdapter(adapter);
@@ -98,13 +99,16 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
                         getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, home).commit();
                         break;
                     case 1: // Setting
-                        getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, new Settings()).commit();
+                        getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout,new Settings()).commit();
                         break;
                     case 2: // sensor
                         getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, sensor).commit();
                         break;
                     case 3: // Helmet
                         getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, helmet).commit();
+                        break;
+                    case 4: // 내경로
+                        getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, myload).commit();
                         break;
 
                 }

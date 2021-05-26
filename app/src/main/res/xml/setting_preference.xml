@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory android:title="프로필">
 
-    <PreferenceCategory android:title="메시지 알림">
-        <SwitchPreference
-            android:key="message"
-            android:title="메시지 알림"/>
+        <EditTextPreference
+            android:key="name"
+            android:title="닉네임"
+            android:summary="닉네임을 설정하세요."/>
+
+        <PreferenceScreen
+            android:key="myload"
+            android:title="내경로"
+            android:summary="내가 간 거리를 알 수 있음"/>
 
         <PreferenceScreen
             android:key="keyword_screen"
@@ -39,4 +46,5 @@
             />
 
     </PreferenceCategory>
+
 </PreferenceScreen>
