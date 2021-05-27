@@ -6,12 +6,12 @@
         <EditTextPreference
             android:key="name"
             android:title="닉네임"
-            android:summary="닉네임을 설정하세요."/>
+            android:summary="닉네임을 설정하세요." />
 
         <PreferenceScreen
             android:key="myload"
             android:title="내경로"
-            android:summary="내가 간 거리를 알 수 있음"/>
+            android:summary="내가 간 거리를 삭제할 수 있음" />
 
         <PreferenceScreen
             android:key="keyword_screen"
@@ -47,4 +47,9 @@
 
     </PreferenceCategory>
 
+    <PreferenceScreen
+        android:key="logout"
+        android:title="로그아웃"
+        android:layout="@layout/logout">
+    </PreferenceScreen>
 </PreferenceScreen>

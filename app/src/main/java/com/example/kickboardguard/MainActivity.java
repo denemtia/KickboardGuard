@@ -74,7 +74,6 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         // 프레그먼트 설정 ##########################################################################
 
         home = new Home();
