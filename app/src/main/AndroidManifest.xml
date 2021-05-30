@@ -34,7 +34,7 @@
         </activity>
         
         <activity android:name=".MainActivity"/>
-
+        <activity android:name=".Setting.SettingActivity"/>
 
         <meta-data
             android:name="com.kakao.sdk.AppKey"

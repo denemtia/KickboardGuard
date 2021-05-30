@@ -2,6 +2,11 @@
     <string name="app_name">Kick boardGuard</string>
     <string name="client_id">424199690724-clq6cvsvd4mfljoii8iejscthrio4dmb.apps.googleusercontent.com</string>
 
+<!--    Preference저장변수-->
+    <string name="email_key">email</string>
+    <string name="name_key">id_name</string>
+    <string name="phone_key">phone</string>
+    <string name="myload_key">myload</string>
 
 
 <!--    슬라이드 String 복사-->

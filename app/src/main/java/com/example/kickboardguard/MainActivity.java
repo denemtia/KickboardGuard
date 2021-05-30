@@ -10,7 +10,6 @@ import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
@@ -22,7 +21,6 @@ import android.widget.ListView;
 import android.widget.Toast;
 // 공공 데이터 부분
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -39,14 +37,15 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
 import net.daum.mf.map.api.MapCircle;
 import net.daum.mf.map.api.MapPoint;
 import net.daum.mf.map.api.MapReverseGeoCoder;
 import net.daum.mf.map.api.MapView;
 import android.media.MediaPlayer;
+
+import com.example.kickboardguard.Setting.SettingActivity;
+import com.example.kickboardguard.Setting.Settings;
 
 public class MainActivity extends AppCompatActivity implements net.daum.mf.map.api.MapView.CurrentLocationEventListener, MapReverseGeoCoder.ReverseGeoCodingResultListener, LocationListener {
 
@@ -62,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
     private Helmet helmet;
     private Sensor sensor;
     private Myload myload;
+    private SettingActivity settings;
 
     private LocationManager locationManager;
     private Location mLastlocation = null;
@@ -80,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
         helmet = new Helmet();
         sensor = new Sensor();
         myload = new Myload();
+        settings = new SettingActivity();
         // 프레그먼트 설정 ##########################################################################
 
 
@@ -98,7 +99,8 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
                         getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, home).commit();
                         break;
                     case 1: // Setting
-                        getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout,new Settings()).commit();
+                        Intent intent = new Intent(getApplicationContext(), SettingActivity.class);
+                        startActivity(intent);
                         break;
                     case 2: // sensor
                         getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, sensor).commit();
