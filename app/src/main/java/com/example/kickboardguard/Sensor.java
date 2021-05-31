@@ -1,5 +1,6 @@
 package com.example.kickboardguard;
 
+
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -7,12 +8,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.media.ToneGenerator;
 import android.os.Bundle;
 
 
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
@@ -22,6 +25,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.NumberPicker;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,6 +44,10 @@ import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 import static androidx.core.content.ContextCompat.getSystemService;
 
+import android.widget.NumberPicker;
+import android.widget.TextView;
+import android.widget.NumberPicker.OnValueChangeListener;
+import android.widget.ToggleButton;
 
 public class Sensor extends Fragment {
 
@@ -62,7 +72,9 @@ public class Sensor extends Fragment {
     ScrollView scrolldata;              // 스크롤뷰 선언
 
     MainActivity activit;
-
+    public TextView tvShowNumbers;
+    Context ct;
+    int getlimit;
 
 
     @Override
@@ -84,6 +96,9 @@ public class Sensor extends Fragment {
 
         }
 
+
+
+
     }
 
     @Override
@@ -92,13 +107,39 @@ public class Sensor extends Fragment {
         // Inflate the layout for this fragment
 
         View view = inflater.inflate(R.layout.fragment_sensor,container,false);
-        Button bton_button = (Button) view.findViewById(R.id.BTon_button);
+        final RadioGroup rg = (RadioGroup)view.findViewById(R.id.radioGroup1);
+        Button b = (Button)view.findViewById(R.id.button1);
+        final TextView tv = (TextView)view.findViewById(R.id.textView2);
+
+        b.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int id = rg.getCheckedRadioButtonId();
+                //getCheckedRadioButtonId() 의 리턴값은 선택된 RadioButton 의 id 값.
+                RadioButton rb = (RadioButton)view.findViewById(id);
+                String rbstring=rb.getText().toString();
+                String getlimits=rbstring.trim();
+                getlimit=Integer.parseInt(getlimits);
+                tv.setText("결과: " +getlimits);
+
+            } // end onClick()
+        });  // end Listener
+
+
+        ToggleButton bton_button = (ToggleButton) view.findViewById(R.id.BTon_button);
+
         bton_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(bton_button.isChecked()){
+                checkBluetooth();}
+                else{
+                    bluetoothOff();
 
-                checkBluetooth();
+                }
             }
+
+
         });
 
 
@@ -168,7 +209,7 @@ public class Sensor extends Fragment {
                                     handler.post(new Runnable(){
                                         public void run(){
                                             System.out.println(getnum);
-                                            if(getnum<1500){
+                                            if(getnum<getlimit){
                                                 ToneGenerator tone= new ToneGenerator(AudioManager.STREAM_MUSIC,ToneGenerator.MAX_VOLUME);
                                                 tone.startTone(ToneGenerator.TONE_DTMF_C,500);
 
@@ -192,6 +233,9 @@ public class Sensor extends Fragment {
             }
         });
         mWorkerThread.start();
+    }
+    public void bluetoothOff(){
+        mBluetoothAdapter.disable();
     }
     void selectDevice(){
         mDevices = mBluetoothAdapter.getBondedDevices();
@@ -256,5 +300,6 @@ public class Sensor extends Fragment {
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
+
 
 }

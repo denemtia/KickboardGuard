@@ -10,7 +10,6 @@ import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
@@ -22,7 +21,6 @@ import android.widget.ListView;
 import android.widget.Toast;
 // 공공 데이터 부분
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -46,6 +44,9 @@ import net.daum.mf.map.api.MapReverseGeoCoder;
 import net.daum.mf.map.api.MapView;
 import android.media.MediaPlayer;
 
+import com.example.kickboardguard.Setting.SettingActivity;
+import com.example.kickboardguard.Setting.Settings;
+
 public class MainActivity extends AppCompatActivity implements net.daum.mf.map.api.MapView.CurrentLocationEventListener, MapReverseGeoCoder.ReverseGeoCodingResultListener, LocationListener {
 
     private static final String LOG_TAG = "MainActivity";
@@ -57,9 +58,10 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
     String[] REQUIRED_PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION};
 
     private Home home;
-    private Settings settings;
     private Helmet helmet;
     private Sensor sensor;
+    private Myload myload;
+    private SettingActivity settings;
 
     private LocationManager locationManager;
     private Location mLastlocation = null;
@@ -72,20 +74,18 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-
-
         // 프레그먼트 설정 ##########################################################################
 
         home = new Home();
-        settings = new Settings();
         helmet = new Helmet();
         sensor = new Sensor();
+        myload = new Myload();
+        settings = new SettingActivity();
         // 프레그먼트 설정 ##########################################################################
 
 
         // 메뉴 설정 ################################################################################
-        final String[] items = {"Home", "Setting", "sensor", "BLUE", "BLACK"};
+        final String[] items = {"홈", "설정", "후방감지", "헬멧","내경로"};
         ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, items);
         listview = (ListView) findViewById(R.id.drawer_menulist);
         listview.setAdapter(adapter);
@@ -99,13 +99,17 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
                         getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, home).commit();
                         break;
                     case 1: // Setting
-                        getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, settings).commit();
+                        Intent intent = new Intent(getApplicationContext(), SettingActivity.class);
+                        startActivity(intent);
                         break;
                     case 2: // sensor
                         getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, sensor).commit();
                         break;
                     case 3: // Helmet
                         getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, helmet).commit();
+                        break;
+                    case 4: // 내경로
+                        getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, myload).commit();
                         break;
 
                 }

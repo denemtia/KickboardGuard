@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory android:title="프로필">
+
+        <Preference
+            android:key="image_preference"
+            app:layout="@layout/setting_imageview"
+             />
+        <EditTextPreference
+            android:key="@string/name_key"
+            android:title="이름"
+            android:summary="이름을 적어주세요"
+            android:icon="@drawable/person"/>
+
+       <EditTextPreference
+           android:key="@string/email_key"
+           android:title="이메일."
+           android:summary="이메일을 적어주세요."
+           android:icon="@drawable/email"/>
+
+        <EditTextPreference
+            android:key="@string/phone_key"
+            android:title="전화번호"
+            android:summary="전화번호를 입력해주세요"
+            android:icon="@drawable/phone"/>
+
+        <PreferenceScreen
+            android:key="@string/myload_key"
+            android:title="내경로"
+            android:summary="내경로를 삭제할 수 있습니다."
+            android:icon="@drawable/myload"/>
+
+    </PreferenceCategory>
+
+    <PreferenceScreen
+        android:key="logout"
+        android:title="로그아웃"
+        android:layout="@layout/logout">
+    </PreferenceScreen>
+
+</PreferenceScreen>

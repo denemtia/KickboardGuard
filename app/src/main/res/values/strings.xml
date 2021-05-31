@@ -2,26 +2,35 @@
     <string name="app_name">Kick boardGuard</string>
     <string name="client_id">424199690724-clq6cvsvd4mfljoii8iejscthrio4dmb.apps.googleusercontent.com</string>
 
+<!--    Preference저장변수-->
+    <string name="email_key">email</string>
+    <string name="name_key">id_name</string>
+    <string name="phone_key">phone</string>
+    <string name="myload_key">myload</string>
 
 
 <!--    슬라이드 String 복사-->
     <string name="title_activity_welcome">Home Screen</string>
-    <string name="next">NEXT</string>
-    <string name="skip">SKIP</string>
-    <string name="start">GOT IT</string>
+    <string name="next">다음</string>
+    <string name="skip">스킵</string>
+    <string name="start">시작하기</string>
 
-    <string name="slide_1_title">Hello Food!</string>
-    <string name="slide_1_desc">The easiest way to order food from your favourite restaurant!</string>
+    <string name="slide_1_title">위치 엑세스하는 방법</string>
+    <string name="slide_1_desc">앱 사용 중에만 허용을 눌러주세요.</string>
 
-    <string name="slide_2_title">Movie Tickets</string>
-    <string name="slide_2_desc">Book movie tickets for your family and friends!</string>
+    <string name="slide_2_title">메뉴 확인방법</string>
+    <string name="slide_2_desc">왼쪽 그림과같이 화살표방향으로 슬라이드하면 메뉴가 나옵니다!!</string>
 
-    <string name="slide_3_title">Great Discounts</string>
-    <string name="slide_3_desc">Best discounts on every single service we offer!</string>
+    <string name="slide_3_title">메뉴 구성(홈,설정)</string>
+    <string name="slide_3_desc">홈 : 다시 메인화면으로 돌아올때 사용합니다.</string>
+    <string name="slide_3_desc1">설정 : 내 프로필과 로그인 해제등을 할 수 있습니다.</string>
 
-    <string name="slide_4_title">World Travel</string>
-    <string name="slide_4_desc">Book tickets of any transportation and travel the world!</string>
+    <string name="slide_4_title">메뉴 구성(후방감지,헬멧)</string>
+    <string name="slide_4_desc">후방감지 : 나한테 다가오는 물체를 후방에서 감지 할 수 있습니다.</string>
+    <string name="slide_4_desc1">헬멧 : 잠시 어디 이동할 때 헬멧을 보호할 수 있는 잠금기능!!</string>
+    <string name="slide_4_desc2">내경로 : 내가 목적지까지 간 경로를 확인할 수 있는 공간!!</string>
 
     <string name="play_again_desc">To see the welcome slider again, goto Settings -> apps -> welcome slider -> clear data</string>
     <string name="play_again">Play Again</string>
+    <string name="ㅇㅇ">현재로그인하고있습니다.</string>
 </resources>
