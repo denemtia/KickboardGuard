@@ -101,7 +101,6 @@ public class Helmet extends Fragment {
             public void onClick(View view) {
                 String msg;
                 msg = "ON";
-                msg += mStrDelimiter;
                 try{
                     mOutputStream.write(msg.getBytes());
 
@@ -120,7 +119,6 @@ public class Helmet extends Fragment {
             public void onClick(View view) {
                 String msg;
                 msg = "OFF";
-                msg += mStrDelimiter;
                 try{
                     mOutputStream.write(msg.getBytes());
                 }catch(Exception e){
