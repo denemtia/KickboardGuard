@@ -70,18 +70,15 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
     private LocationManager locationManager;
     private Location mLastlocation = null;
     private double speed;
-    private long backbtntime=0;
+    private long backbtntime = 0;
     Geocoder g = new Geocoder(this);
 
 
-
-    Location location; double latitude; double longitude;
+    Location location;
+    double latitude;
+    double longitude;
     private GpsTracker gpsTracker;
-
-
-
-
-
+    String adarray[] =new String[2];
 
 
     @Override
@@ -101,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
 
 
         // 메뉴 설정 ################################################################################
-        final String[] items = {"홈", "설정", "후방감지", "헬멧","내경로"};
+        final String[] items = {"홈", "설정", "후방감지", "헬멧", "내경로"};
         ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, items);
         listview = (ListView) findViewById(R.id.drawer_menulist);
         listview.setAdapter(adapter);
@@ -137,8 +134,6 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
         // 메뉴 설정 ################################################################################
 
 
-
-
         // 카카오 맵 설정 ############################################################################
         mMapView = (net.daum.mf.map.api.MapView) findViewById(R.id.map_view);
         //mMapView.setDaumMapApiKey(MapApiConst.DAUM_MAPS_ANDROID_APP_API_KEY);
@@ -154,9 +149,6 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
         // 카카오 맵 설정 ############################################################################
 
 
-
-
-
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -170,20 +162,19 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, this);
 
 
-
         // 공공 데이터 ##############################################################################
         StrictMode.enableDefaults();
 
 
         boolean inresultCode = false, inresultMsg = false, intotalCount = false, innumOfRows = false, inpageNo = false;
-        boolean infreqocZoneVer = false, infreqocZoneId = false, infreqocZoneNm = false, insignguCode = false, insignguNm=false;
-        boolean inacdntCo = false, incenterX= false , incenterY = false , inzoneRds = false;
+        boolean infreqocZoneVer = false, infreqocZoneId = false, infreqocZoneNm = false, insignguCode = false, insignguNm = false;
+        boolean inacdntCo = false, incenterX = false, incenterY = false, inzoneRds = false;
 
-        String resultCode = null, resultMsg = null, totalCount = null, numOfRows = null, pageNo = null, freqocZoneVer=null, freqocZoneId=null, freqocZoneNm=null;
+        String resultCode = null, resultMsg = null, totalCount = null, numOfRows = null, pageNo = null, freqocZoneVer = null, freqocZoneId = null, freqocZoneNm = null;
         String signguCode = null, signguNm = null, acdntCo = null, centerX = null, centerY = null, zoneRds = null;
 
 
-        try{
+        try {
             URL url = new URL("http://apis.data.go.kr/B552468/acdntFreqocZone/getAcdntFreqocZone?" +
                     "serviceKey=sY6y0bVXhsk6jkopIZpTWSZAAXLGLYJB1Tg1O%2B0f%2BcqvmV2Pe9P1Yx7Ne3JolOMxBbHcjEba%2BsXRABa4ZUUtyQ%3D%3D" +       //서비스키
                     "&numOfRows=100" +           //한 페이지 결과 수
@@ -199,114 +190,115 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
 
             int parserEvent = parser.getEventType();
             System.out.println("파싱시작합니다.");
+            splitaddress();
 
-            while (parserEvent != XmlPullParser.END_DOCUMENT){
-                switch(parserEvent){
+            while (parserEvent != XmlPullParser.END_DOCUMENT) {
+                switch (parserEvent) {
                     case XmlPullParser.START_TAG://parser가 시작 태그를 만나면 실행
-                        if(parser.getName().equals("resultCode")){ //title 만나면 내용을 받을수 있게 하자
+                        if (parser.getName().equals("resultCode")) { //title 만나면 내용을 받을수 있게 하자
                             inresultCode = true;
                         }
-                        if(parser.getName().equals("resultMsg")){ //address 만나면 내용을 받을수 있게 하자
+                        if (parser.getName().equals("resultMsg")) { //address 만나면 내용을 받을수 있게 하자
                             inresultMsg = true;
                         }
-                        if(parser.getName().equals("totalCount")){ //mapx 만나면 내용을 받을수 있게 하자
+                        if (parser.getName().equals("totalCount")) { //mapx 만나면 내용을 받을수 있게 하자
                             intotalCount = true;
                         }
-                        if(parser.getName().equals("numOfRows")){ //mapy 만나면 내용을 받을수 있게 하자
+                        if (parser.getName().equals("numOfRows")) { //mapy 만나면 내용을 받을수 있게 하자
                             innumOfRows = true;
                         }
-                        if(parser.getName().equals("pageNo")){ //mapy 만나면 내용을 받을수 있게 하자
+                        if (parser.getName().equals("pageNo")) { //mapy 만나면 내용을 받을수 있게 하자
                             inpageNo = true;
                         }
-                        if(parser.getName().equals("freqocZoneVer")){ //mapy 만나면 내용을 받을수 있게 하자
+                        if (parser.getName().equals("freqocZoneVer")) { //mapy 만나면 내용을 받을수 있게 하자
                             infreqocZoneVer = true;
                         }
-                        if(parser.getName().equals("freqocZoneId")){ //mapy 만나면 내용을 받을수 있게 하자
+                        if (parser.getName().equals("freqocZoneId")) { //mapy 만나면 내용을 받을수 있게 하자
                             infreqocZoneId = true;
                         }
-                        if(parser.getName().equals("freqocZoneNm")){ //mapy 만나면 내용을 받을수 있게 하자
+                        if (parser.getName().equals("freqocZoneNm")) { //mapy 만나면 내용을 받을수 있게 하자
                             infreqocZoneNm = true;
                         }
-                        if(parser.getName().equals("signguCode")){ //mapy 만나면 내용을 받을수 있게 하자
+                        if (parser.getName().equals("signguCode")) { //mapy 만나면 내용을 받을수 있게 하자
                             insignguCode = true;
                         }
-                        if(parser.getName().equals("signguNm")){ //mapy 만나면 내용을 받을수 있게 하자
+                        if (parser.getName().equals("signguNm")) { //mapy 만나면 내용을 받을수 있게 하자
                             insignguNm = true;
                         }
-                        if(parser.getName().equals("acdntCo")){ //mapy 만나면 내용을 받을수 있게 하자
+                        if (parser.getName().equals("acdntCo")) { //mapy 만나면 내용을 받을수 있게 하자
                             inacdntCo = true;
                         }
-                        if(parser.getName().equals("centerX")) { //mapy 만나면 내용을 받을수 있게 하자
+                        if (parser.getName().equals("centerX")) { //mapy 만나면 내용을 받을수 있게 하자
                             incenterX = true;
                         }
-                        if(parser.getName().equals("centerY")) { //mapy 만나면 내용을 받을수 있게 하자
+                        if (parser.getName().equals("centerY")) { //mapy 만나면 내용을 받을수 있게 하자
                             incenterY = true;
                         }
-                        if(parser.getName().equals("zoneRds")) { //mapy 만나면 내용을 받을수 있게 하자
+                        if (parser.getName().equals("zoneRds")) { //mapy 만나면 내용을 받을수 있게 하자
                             inzoneRds = true;
                         }
-                        if(parser.getName().equals("resultMsg")){ //message 태그를 만나면 에러 출력
-                            Log.i("에러 :", resultMsg+ "에러");
+                        if (parser.getName().equals("resultMsg")) { //message 태그를 만나면 에러 출력
+                            Log.i("에러 :", resultMsg + "에러");
                             //여기에 에러코드에 따라 다른 메세지를 출력하도록 할 수 있다.
                         }
                         break;
 
                     case XmlPullParser.TEXT://parser가 내용에 접근했을때
-                        if(intotalCount){ //isTitle이 true일 때 태그의 내용을 저장.
+                        if (intotalCount) { //isTitle이 true일 때 태그의 내용을 저장.
                             totalCount = parser.getText();
                             intotalCount = false;
                         }
-                        if(innumOfRows){ //isAddress이 true일 때 태그의 내용을 저장.
+                        if (innumOfRows) { //isAddress이 true일 때 태그의 내용을 저장.
                             numOfRows = parser.getText();
                             innumOfRows = false;
                         }
-                        if(inpageNo){ //isMapx이 true일 때 태그의 내용을 저장.
+                        if (inpageNo) { //isMapx이 true일 때 태그의 내용을 저장.
                             pageNo = parser.getText();
                             inpageNo = false;
                         }
-                        if(infreqocZoneVer){ //isMapy이 true일 때 태그의 내용을 저장.
+                        if (infreqocZoneVer) { //isMapy이 true일 때 태그의 내용을 저장.
                             freqocZoneVer = parser.getText();
                             infreqocZoneVer = false;
                         }
-                        if(infreqocZoneId){ //isMapy이 true일 때 태그의 내용을 저장.
+                        if (infreqocZoneId) { //isMapy이 true일 때 태그의 내용을 저장.
                             freqocZoneId = parser.getText();
                             infreqocZoneId = false;
                         }
-                        if(infreqocZoneNm){ //isMapy이 true일 때 태그의 내용을 저장.
+                        if (infreqocZoneNm) { //isMapy이 true일 때 태그의 내용을 저장.
                             freqocZoneNm = parser.getText();
                             infreqocZoneNm = false;
                         }
-                        if(insignguCode){ //isMapy이 true일 때 태그의 내용을 저장.
+                        if (insignguCode) { //isMapy이 true일 때 태그의 내용을 저장.
                             signguCode = parser.getText();
                             insignguCode = false;
                         }
-                        if(insignguNm){ //isMapy이 true일 때 태그의 내용을 저장.
+                        if (insignguNm) { //isMapy이 true일 때 태그의 내용을 저장.
                             signguNm = parser.getText();
                             insignguNm = false;
                         }
-                        if(inacdntCo){ //isMapy이 true일 때 태그의 내용을 저장.
+                        if (inacdntCo) { //isMapy이 true일 때 태그의 내용을 저장.
                             acdntCo = parser.getText();
                             inacdntCo = false;
                         }
-                        if(incenterX){ //isMapy이 true일 때 태그의 내용을 저장.
+                        if (incenterX) { //isMapy이 true일 때 태그의 내용을 저장.
                             centerX = parser.getText();
                             incenterX = false;
                         }
-                        if(incenterY){ //isMapy이 true일 때 태그의 내용을 저장.
+                        if (incenterY) { //isMapy이 true일 때 태그의 내용을 저장.
                             centerY = parser.getText();
                             incenterY = false;
                         }
-                        if(inzoneRds){ //isMapy이 true일 때 태그의 내용을 저장.
+                        if (inzoneRds) { //isMapy이 true일 때 태그의 내용을 저장.
                             zoneRds = parser.getText();
                             inzoneRds = false;
                         }
                         break;
                     case XmlPullParser.END_TAG:
-                        if(parser.getName().equals("item")){
-                            Log.d("data","총건수 : "+ totalCount +"\n 한 페이지 결과수: "+ numOfRows +"\n 페이지  번호 : " + pageNo
-                                    +"\n 다발구역버전 : " + freqocZoneVer +  "\n 다발구역아이디 : " + freqocZoneId+ "\n 다발구역명 : " + freqocZoneNm
-                                    +"\n 시군구코드 : " +signguCode + "\n 시군구명 : " + signguNm + "\n 사고건수 : " +acdntCo
-                                    +"\n 중심X : " +centerX +"\n 중심Y : " +centerY+"\n"+"\n 구역반경 : " +zoneRds+"\n");
+                        if (parser.getName().equals("item")) {
+                            Log.d("data", "총건수 : " + totalCount + "\n 한 페이지 결과수: " + numOfRows + "\n 페이지  번호 : " + pageNo
+                                    + "\n 다발구역버전 : " + freqocZoneVer + "\n 다발구역아이디 : " + freqocZoneId + "\n 다발구역명 : " + freqocZoneNm
+                                    + "\n 시군구코드 : " + signguCode + "\n 시군구명 : " + signguNm + "\n 사고건수 : " + acdntCo
+                                    + "\n 중심X : " + centerX + "\n 중심Y : " + centerY + "\n" + "\n 구역반경 : " + zoneRds + "\n");
 
 
                             MapCircle circle = new MapCircle(
@@ -323,31 +315,29 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
                 }
                 parserEvent = parser.next();
             }
-        } catch(Exception e){
-            Log.i("에러","에러발생");
+        } catch (Exception e) {
+            Log.i("에러", "에러발생");
         }
         // 공공 데이터 ##############################################################################
 
 
-
-
-
     }
+
     @Override
     public void onBackPressed() {
-        long curTime=System.currentTimeMillis();
-        long gapTime=curTime-backbtntime;
+        long curTime = System.currentTimeMillis();
+        long gapTime = curTime - backbtntime;
 
-        if(0<=gapTime&&2000>=gapTime) {
+        if (0 <= gapTime && 2000 >= gapTime) {
             super.onBackPressed();
-        }
-        else{
-            backbtntime=curTime;
-            Toast.makeText(this,"한번 더 누르면 종료됩니다",Toast.LENGTH_SHORT).show();
+        } else {
+            backbtntime = curTime;
+            Toast.makeText(this, "한번 더 누르면 종료됩니다", Toast.LENGTH_SHORT).show();
 
         }
     }
-    public String getCurrentAddress( double latitude, double longitude) {
+
+    public String getCurrentAddress(double latitude, double longitude) {
 
         //지오코더... GPS를 주소로 변환
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
@@ -371,7 +361,6 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
         }
 
 
-
         if (addresses == null || addresses.size() == 0) {
             Toast.makeText(this, "주소 미발견", Toast.LENGTH_LONG).show();
             return "주소 미발견";
@@ -379,14 +368,14 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
         }
 
         Address address = addresses.get(0);
-        return address.getAddressLine(0).toString()+"\n";
+        return address.getAddressLine(0).toString() + "\n";
 
     }
+
     // 속도 설정 #################################################################################
     @Override
     public void onLocationChanged(Location location) {
         gpsTracker = new GpsTracker(MainActivity.this);
-
         double latitude = gpsTracker.getLatitude();
         double longitude = gpsTracker.getLongitude();
         String address = getCurrentAddress(latitude, longitude);
@@ -403,31 +392,31 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
         if (lastKnownLocation != null) {
             sdf = new SimpleDateFormat("HH:mm:ss");
             String formatDate = sdf.format(new Date(lastKnownLocation.getTime()));
-            Log.d("Time",formatDate);  //Time
+            Log.d("Time", formatDate);  //Time
         }
         double getSpeed = Double.parseDouble(String.format("%.3f", lastKnownLocation.getSpeed()));
-        Log.d("Get Speed" , String.valueOf(getSpeed));  //Get Speed
+        Log.d("Get Speed", String.valueOf(getSpeed));  //Get Speed
         String formatDate = sdf.format(new Date(lastKnownLocation.getTime()));
-        Log.d("Time",formatDate);  //Time
+        Log.d("Time", formatDate);  //Time
 
         // 위치 변경이 두번째로 변경된 경우 계산에 의해 속도 계산
-        if(mLastlocation != null) {
+        if (mLastlocation != null) {
             //시간 간격
             deltaTime = (lastKnownLocation.getTime() - mLastlocation.getTime()) / 1000.0;
-            Log.d("Time difference" ,deltaTime + " sec");  // Time Difference
+            Log.d("Time difference", deltaTime + " sec");  // Time Difference
             Log.d("// Time Difference", mLastlocation.distanceTo(lastKnownLocation) + " m");  // Time Difference
             // 속도 계산
             speed = mLastlocation.distanceTo(lastKnownLocation) / deltaTime;
 
             String formatLastDate = sdf.format(new Date(mLastlocation.getTime()));
-            Log.d("Last Time",formatLastDate);
+            Log.d("Last Time", formatLastDate);
 
             double calSpeed = Double.parseDouble(String.format("%.3f", speed));
-            double kmhcalSpeed=3.6*calSpeed;
-            if(kmhcalSpeed>25){
-                Toast.makeText(this.getApplicationContext(),"위험 25km/h 초과했습니다",
+            double kmhcalSpeed = 3.6 * calSpeed;
+            if (kmhcalSpeed > 25) {
+                Toast.makeText(this.getApplicationContext(), "위험 25km/h 초과했습니다",
                         Toast.LENGTH_SHORT).show();
-                MediaPlayer player=MediaPlayer.create(this,R.raw.siren);
+                MediaPlayer player = MediaPlayer.create(this, R.raw.siren);
                 player.start();
 
 
@@ -452,7 +441,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
             return;
         }
         // 위치정보 업데이트
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000,0, this);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, this);
     }
 
     @Override
@@ -468,7 +457,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
             return;
         }
         // 위치정보 업데이트
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000,0, this);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, this);
     }
 
     @Override
@@ -500,19 +489,19 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
 
     public void data() throws IOException {
         StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/B552468/acdntFreqocZone"); /*URL*/
-        urlBuilder.append("?" + URLEncoder.encode("ServiceKey","UTF-8") + "=서비스키"); /*Service Key*/
-        urlBuilder.append("&" + URLEncoder.encode("ServiceKey","UTF-8") + "=" + URLEncoder.encode("-", "UTF-8")); /*공공데이터포털에서 받은 인증키*/
-        urlBuilder.append("&" + URLEncoder.encode("pageNo","UTF-8") + "=" + URLEncoder.encode("1", "UTF-8")); /*페이지번호*/
-        urlBuilder.append("&" + URLEncoder.encode("numOfRows","UTF-8") + "=" + URLEncoder.encode("10", "UTF-8")); /*한 페이지 결과 수*/
-        urlBuilder.append("&" + URLEncoder.encode("dataType","UTF-8") + "=" + URLEncoder.encode("XML", "UTF-8")); /*결과형식(XML/JSON) Default: XML*/
-        urlBuilder.append("&" + URLEncoder.encode("signguCode","UTF-8") + "=" + URLEncoder.encode("11110", "UTF-8")); /*검색을 원하는 시군구 코드 *시군구 코드 참조*/
+        urlBuilder.append("?" + URLEncoder.encode("ServiceKey", "UTF-8") + "=서비스키"); /*Service Key*/
+        urlBuilder.append("&" + URLEncoder.encode("ServiceKey", "UTF-8") + "=" + URLEncoder.encode("-", "UTF-8")); /*공공데이터포털에서 받은 인증키*/
+        urlBuilder.append("&" + URLEncoder.encode("pageNo", "UTF-8") + "=" + URLEncoder.encode("1", "UTF-8")); /*페이지번호*/
+        urlBuilder.append("&" + URLEncoder.encode("numOfRows", "UTF-8") + "=" + URLEncoder.encode("10", "UTF-8")); /*한 페이지 결과 수*/
+        urlBuilder.append("&" + URLEncoder.encode("dataType", "UTF-8") + "=" + URLEncoder.encode("XML", "UTF-8")); /*결과형식(XML/JSON) Default: XML*/
+        urlBuilder.append("&" + URLEncoder.encode("signguCode", "UTF-8") + "=" + URLEncoder.encode("11110", "UTF-8")); /*검색을 원하는 시군구 코드 *시군구 코드 참조*/
         URL url = new URL(urlBuilder.toString());
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
         conn.setRequestProperty("Content-type", "application/json");
         System.out.println("Response code: " + conn.getResponseCode());
         BufferedReader rd;
-        if(conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
+        if (conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
             rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
         } else {
             rd = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
@@ -524,13 +513,11 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
         }
         rd.close();
         conn.disconnect();
-        Log.d("data test","************************************");
+        Log.d("data test", "************************************");
         Log.d("data test", sb.toString());
 
 
-
     }
-
 
 
     @Override
@@ -579,8 +566,6 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
     }
 
 
-
-
     /*
      * ActivityCompat.requestPermissions를 사용한 퍼미션 요청의 결과를 리턴받는 메소드입니다.
      */
@@ -589,7 +574,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
                                            @NonNull String[] permissions,
                                            @NonNull int[] grandResults) {
 
-        if ( permsRequestCode == PERMISSIONS_REQUEST_CODE && grandResults.length == REQUIRED_PERMISSIONS.length) {
+        if (permsRequestCode == PERMISSIONS_REQUEST_CODE && grandResults.length == REQUIRED_PERMISSIONS.length) {
 
             // 요청 코드가 PERMISSIONS_REQUEST_CODE 이고, 요청한 퍼미션 개수만큼 수신되었다면
 
@@ -606,12 +591,11 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
             }
 
 
-            if ( check_result ) {
+            if (check_result) {
                 Log.d("@@@", "start");
                 //위치 값을 가져올 수 있음
                 mMapView.setCurrentLocationTrackingMode(net.daum.mf.map.api.MapView.CurrentLocationTrackingMode.TrackingModeOnWithHeading);
-            }
-            else {
+            } else {
                 // 거부한 퍼미션이 있다면 앱을 사용할 수 없는 이유를 설명해주고 앱을 종료합니다.2 가지 경우가 있습니다.
 
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this, REQUIRED_PERMISSIONS[0])) {
@@ -620,7 +604,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
                     finish();
 
 
-                }else {
+                } else {
 
                     Toast.makeText(MainActivity.this, "퍼미션이 거부되었습니다. 설정(앱 정보)에서 퍼미션을 허용해야 합니다. ", Toast.LENGTH_LONG).show();
 
@@ -630,7 +614,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
         }
     }
 
-    void checkRunTimePermission(){
+    void checkRunTimePermission() {
 
         //런타임 퍼미션 처리
         // 1. 위치 퍼미션을 가지고 있는지 체크합니다.
@@ -638,7 +622,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
                 Manifest.permission.ACCESS_FINE_LOCATION);
 
 
-        if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED ) {
+        if (hasFineLocationPermission == PackageManager.PERMISSION_GRANTED) {
 
             // 2. 이미 퍼미션을 가지고 있다면
             // ( 안드로이드 6.0 이하 버전은 런타임 퍼미션이 필요없기 때문에 이미 허용된 걸로 인식합니다.)
@@ -670,7 +654,6 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
         }
 
     }
-
 
 
     //여기부터는 GPS 활성화를 위한 메소드들
@@ -730,6 +713,26 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
 
     }
 
+    public void splitaddress() {
+        gpsTracker = new GpsTracker(MainActivity.this);
+        double latitude = gpsTracker.getLatitude();
+        double longitude = gpsTracker.getLongitude();
+        int a=0;
+        adarray=new String[2];
+        String address = getCurrentAddress(latitude, longitude);
+        String result = address.substring(5);
+        String array[] = result.split(" ");
+        for (int i = 0; i < 2; i++) {
+            adarray[i]=array[i];
 
+            }
+        for(int k=0;k<2;k++){
+            System.out.println(adarray[k]);
+
+        }
+
+
+
+    }
 }
 
