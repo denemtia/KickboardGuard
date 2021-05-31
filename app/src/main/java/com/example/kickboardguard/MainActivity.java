@@ -78,7 +78,8 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
     double latitude;
     double longitude;
     private GpsTracker gpsTracker;
-    String adarray[] =new String[2];
+    String adarray;
+    int lonum=0;
 
 
     @Override
@@ -175,11 +176,12 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
 
 
         try {
+            splitaddress();
             URL url = new URL("http://apis.data.go.kr/B552468/acdntFreqocZone/getAcdntFreqocZone?" +
                     "serviceKey=sY6y0bVXhsk6jkopIZpTWSZAAXLGLYJB1Tg1O%2B0f%2BcqvmV2Pe9P1Yx7Ne3JolOMxBbHcjEba%2BsXRABa4ZUUtyQ%3D%3D" +       //서비스키
                     "&numOfRows=100" +           //한 페이지 결과 수
                     "&pageNo=1" +               //페이지 번호
-                    "&signguCode=46110" +       //시군구코드
+                    "&signguCode="+lonum +       //시군구코드
                     "&datatype=XML"             //데이터 유형
             ); //검색 URL부분
 
@@ -190,7 +192,6 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
 
             int parserEvent = parser.getEventType();
             System.out.println("파싱시작합니다.");
-            splitaddress();
 
             while (parserEvent != XmlPullParser.END_DOCUMENT) {
                 switch (parserEvent) {
@@ -718,21 +719,65 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
         double latitude = gpsTracker.getLatitude();
         double longitude = gpsTracker.getLongitude();
         int a=0;
-        adarray=new String[2];
         String address = getCurrentAddress(latitude, longitude);
         String result = address.substring(5);
         String array[] = result.split(" ");
-        for (int i = 0; i < 2; i++) {
-            adarray[i]=array[i];
+        adarray=array[0];
+        switch (adarray) {
+            case "서울특별시":
+                lonum=11;
+                break;
+            case "부산광역시":
+                lonum=26;
+                break;
+            case "대구광역시":
+                lonum=27;
+                break;
+            case "인천광역시":
+                lonum=28;
+                break;
+            case "광주광역시":
+                lonum=29;
+                break;
+            case "대전광역시":
+                lonum=30;
+                break;
+            case "울산광역시":
+                lonum=31;
+                break;
+            case "세종특별자치시":
+                lonum=36;
+                break;
+            case "경기도":
+                lonum=41;
+                break;
+            case "강원도":
+                lonum=42;
+                break;
+            case "충청북도":
+                lonum=43;
+                break;
+            case "충청남도":
+                lonum=44;
+                break;
+            case "전라북도":
+                lonum=45;
+                break;
+            case "전라남도":
+                lonum=46;
+                break;
+            case "경상북도":
+                lonum=47;
+                break;
+            case "경상남도":
+                lonum=48;
+                break;
+            case "제주특별자치도":
+                lonum=50;
+                break;
 
-            }
-        for(int k=0;k<2;k++){
-            System.out.println(adarray[k]);
 
         }
-
-
-
     }
 }
 
