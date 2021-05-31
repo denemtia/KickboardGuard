@@ -5,6 +5,9 @@
     android:layout_height="match_parent"
     tools:context=".Helmet"
     android:background="#FFFF33">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <TextView
         android:id="@+id/textView"
@@ -12,6 +15,27 @@
         android:layout_height="wrap_content"
         android:text="Helmet"
         android:textSize="50dp" />
+
+    <Button
+        android:id="@+id/BTon_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="BTon_button" />
+
+
+    <Button
+        android:id="@+id/helmet_on"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="on" />
+
+    <Button
+        android:id="@+id/helmet_off"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="off" />
+
+</LinearLayout>
 
 
 </FrameLayout>
