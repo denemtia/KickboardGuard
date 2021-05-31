@@ -7,10 +7,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.Gravity;
@@ -28,6 +31,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
@@ -45,7 +50,6 @@ import net.daum.mf.map.api.MapView;
 import android.media.MediaPlayer;
 
 import com.example.kickboardguard.Setting.SettingActivity;
-import com.example.kickboardguard.Setting.Settings;
 
 public class MainActivity extends AppCompatActivity implements net.daum.mf.map.api.MapView.CurrentLocationEventListener, MapReverseGeoCoder.ReverseGeoCodingResultListener, LocationListener {
 
@@ -67,12 +71,24 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
     private Location mLastlocation = null;
     private double speed;
     private long backbtntime=0;
+    Geocoder g = new Geocoder(this);
+
+
+
+    Location location; double latitude; double longitude;
+    private GpsTracker gpsTracker;
+
+
+
+
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         // 프레그먼트 설정 ##########################################################################
 
@@ -89,6 +105,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
         ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, items);
         listview = (ListView) findViewById(R.id.drawer_menulist);
         listview.setAdapter(adapter);
+
 
         listview.setOnItemClickListener(new ListView.OnItemClickListener() {
             @Override
@@ -330,10 +347,49 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
 
         }
     }
+    public String getCurrentAddress( double latitude, double longitude) {
 
+        //지오코더... GPS를 주소로 변환
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+
+        List<Address> addresses;
+
+        try {
+
+            addresses = geocoder.getFromLocation(
+                    latitude,
+                    longitude,
+                    7);
+        } catch (IOException ioException) {
+            //네트워크 문제
+            Toast.makeText(this, "지오코더 서비스 사용불가", Toast.LENGTH_LONG).show();
+            return "지오코더 서비스 사용불가";
+        } catch (IllegalArgumentException illegalArgumentException) {
+            Toast.makeText(this, "잘못된 GPS 좌표", Toast.LENGTH_LONG).show();
+            return "잘못된 GPS 좌표";
+
+        }
+
+
+
+        if (addresses == null || addresses.size() == 0) {
+            Toast.makeText(this, "주소 미발견", Toast.LENGTH_LONG).show();
+            return "주소 미발견";
+
+        }
+
+        Address address = addresses.get(0);
+        return address.getAddressLine(0).toString()+"\n";
+
+    }
     // 속도 설정 #################################################################################
     @Override
     public void onLocationChanged(Location location) {
+        gpsTracker = new GpsTracker(MainActivity.this);
+
+        double latitude = gpsTracker.getLatitude();
+        double longitude = gpsTracker.getLongitude();
+        String address = getCurrentAddress(latitude, longitude);
         // 속도 설정 #################################################################################
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
         double deltaTime = 0;
