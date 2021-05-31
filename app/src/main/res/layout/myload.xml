@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <Button
+        android:id="@+id/road_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="주행시작"
+        android:layout_alignParentBottom="true"
+        />
+    <Button
+        android:id="@+id/update_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="주행거리올리기"
+        android:layout_centerInParent="true"
+        />
+
+    <Button
+        android:id="@+id/road_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="주행종료"
+        android:layout_centerInParent="true"
+        android:layout_alignParentBottom="true"/>
+
+    <Button
+        android:id="@+id/back_button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="뒤로가기"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"/>
+
+</RelativeLayout>

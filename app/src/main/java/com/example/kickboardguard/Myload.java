@@ -1,40 +1,73 @@
 package com.example.kickboardguard;
 
-import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.Button;
 
-import androidx.fragment.app.Fragment;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
-public class Myload extends Fragment {
+import net.daum.mf.map.api.MapPoint;
+import net.daum.mf.map.api.MapView;
 
-    MainActivity activit;
-    @Override
-    public void onAttach(Context context){
-        super.onAttach(context);
-        activit = (MainActivity)getActivity();
-    }
+public class Myload extends AppCompatActivity {
 
-    @Override
-    public void onDetach(){
-        super.onDetach();
-        activit = null;
-    }
+    Button load_start;
+    Button load_end;
+    Button back_btn;
+
+    private GpsTracker gpsTracker;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
+        setContentView(R.layout.myload);
+        load_start = (Button)findViewById(R.id.road_start);
+        load_end = (Button)findViewById(R.id.road_end);
+        back_btn = (Button)findViewById(R.id.back_button1);
 
-        }
-    }
+        back_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+            }
+        });load_start.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_myload, container, false);
+                Intent intent = new Intent();
+
+                gpsTracker = new GpsTracker(getApplicationContext());
+
+                double latitude = gpsTracker.getLatitude();
+                double longitude = gpsTracker.getLongitude();
+
+                intent.putExtra("latitude_x",latitude);
+                intent.putExtra("longitude_y", longitude);
+                setResult(RESULT_OK, intent);
+                finish();
+            }
+        });
+        load_end.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+
+                gpsTracker = new GpsTracker(getApplicationContext());
+
+                double latitude = gpsTracker.getLatitude();
+                double longitude = gpsTracker.getLongitude();
+
+                intent.putExtra("latitude_x",latitude);
+                intent.putExtra("longitude_y", longitude);
+                setResult(RESULT_FIRST_USER, intent);
+                finish();
+            }
+        });
+
     }
 }

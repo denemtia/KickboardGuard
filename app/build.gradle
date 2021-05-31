@@ -68,7 +68,8 @@ dependencies {
 
     implementation 'org.jsoup:jsoup:1.11.3'
 
-    //setting gradle
+
+    //setting gradle 부분
     def preference_version = "1.1.1"
     implementation "androidx.preference:preference:$preference_version"
     implementation 'com.google.firebase:firebase-database:20.0.0'
@@ -81,5 +82,7 @@ dependencies {
 
     implementation platform('com.google.firebase:firebase-bom:26.5.0')
     implementation 'com.google.firebase:firebase-storage'
+
+    //myload 부분
 
 }

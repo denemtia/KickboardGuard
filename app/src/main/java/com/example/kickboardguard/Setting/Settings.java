@@ -34,13 +34,11 @@ public class Settings extends PreferenceFragmentCompat implements SharedPreferen
     AlertDialog.Builder builder;
     FirebaseUser currentUser;
     private FirebaseAuth mAuth;
-    Preference imageViewPreference;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.setting_preference);
-        imageViewPreference = (Preference)findPreference("image_preference");
         logout = (PreferenceScreen)findPreference("logout");
         email = (EditTextPreference)findPreference(getString(R.string.email_key));
         name = (EditTextPreference)findPreference(getString(R.string.name_key));
@@ -77,13 +75,6 @@ public class Settings extends PreferenceFragmentCompat implements SharedPreferen
                 return true;
             }
         });
-        imageViewPreference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                Image_choose();
-                return true;
-            }
-        });
 
         logout.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -105,21 +96,6 @@ public class Settings extends PreferenceFragmentCompat implements SharedPreferen
     public void onPause() {
         super.onPause();
         getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
-    }
-
-    public  void Image_choose(){
-        builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("이미지 변경");
-        builder.setMessage("이미지 변경하기");
-        builder.setPositiveButton("앨범", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
-        builder.setNegativeButton("취소",null);
-        builder.show();
-
     }
 
     public void Dialog(){
@@ -159,27 +135,4 @@ public class Settings extends PreferenceFragmentCompat implements SharedPreferen
             pref.setSummary(listPref.getText());
         }
     }
-
-    //    @Override
-//    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//
-//        if (requestCode == REQUEST_CODE){
-//            if (resultCode == RESULT_OK){
-//                try {
-//                    InputStream in = getActivity().getContentResolver().openInputStream(data.getData());
-//
-//                    Bitmap img = BitmapFactory.decodeStream(in);
-//                    in.close();
-//
-//                    imageViewPreference.setBitmap(img);
-//                }catch (Exception e){
-//
-//                }
-//            }
-//            else if (resultCode == RESULT_CANCELED){
-//                Toast.makeText(getActivity(), "사진 선택 취소", Toast.LENGTH_LONG).show();
-//            }
-//        }
-//    }
 }

@@ -43,15 +43,23 @@ import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
+import net.daum.mf.map.api.CalloutBalloonAdapter;
+import net.daum.mf.map.api.CameraUpdateFactory;
 import net.daum.mf.map.api.MapCircle;
+import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
+import net.daum.mf.map.api.MapPointBounds;
+import net.daum.mf.map.api.MapPolyline;
 import net.daum.mf.map.api.MapReverseGeoCoder;
 import net.daum.mf.map.api.MapView;
 import android.media.MediaPlayer;
 
 import com.example.kickboardguard.Setting.SettingActivity;
+import com.google.firebase.auth.FirebaseAuth;
 
-public class MainActivity extends AppCompatActivity implements net.daum.mf.map.api.MapView.CurrentLocationEventListener, MapReverseGeoCoder.ReverseGeoCodingResultListener, LocationListener {
+public class MainActivity extends AppCompatActivity implements net.daum.mf.map.api.MapView.CurrentLocationEventListener, MapReverseGeoCoder.ReverseGeoCodingResultListener, LocationListener, MapView.POIItemEventListener {
+
+    static final int REQ_ADD_ROUTING = 1;
 
     private static final String LOG_TAG = "MainActivity";
     String html = "http://apis.data.go.kr/B552468/acdntFreqocZone/getAcdntFreqocZone";
@@ -65,7 +73,6 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
     private Helmet helmet;
     private Sensor sensor;
     private Myload myload;
-    private SettingActivity settings;
 
     private LocationManager locationManager;
     private Location mLastlocation = null;
@@ -73,14 +80,20 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
     private long backbtntime=0;
     Geocoder g = new Geocoder(this);
 
-
-
     Location location; double latitude; double longitude;
     private GpsTracker gpsTracker;
 
-
-
-
+    //myload 변수들
+    double routingx;
+    double routingx1;
+    double routingy;
+    double routingy1;
+    float distanceMeters;
+    float distanceKm;
+    float distanceEnd;
+    float  distanceStart;
+    MapPolyline polyline;
+    MapPOIItem [] markers;
 
 
 
@@ -89,14 +102,12 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         // 프레그먼트 설정 ##########################################################################
 
         home = new Home();
         helmet = new Helmet();
         sensor = new Sensor();
         myload = new Myload();
-        settings = new SettingActivity();
         // 프레그먼트 설정 ##########################################################################
 
 
@@ -126,7 +137,8 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
                         getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, helmet).commit();
                         break;
                     case 4: // 내경로
-                        getSupportFragmentManager().beginTransaction().replace(R.id.frameLayout, myload).commit();
+                        Intent myload = new Intent(getApplicationContext(), Myload.class);
+                        startActivityForResult(myload,REQ_ADD_ROUTING);
                         break;
 
                 }
@@ -153,9 +165,18 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
         }
         // 카카오 맵 설정 ############################################################################
 
-
-
-
+        // myload 변수 초기화
+        routingx = 0;
+        routingx1 = 0;
+        routingy = 0;
+        routingy1 = 0;
+        distanceStart = 0.0f;
+        distanceEnd = 0.0f;
+        polyline = new MapPolyline();
+        polyline.setTag(1000);
+        polyline.setLineColor(Color.argb(128, 255, 51, 0));
+        markers = new MapPOIItem[2];
+        mMapView.setPOIItemEventListener(this);
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -418,7 +439,12 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
             Log.d("// Time Difference", mLastlocation.distanceTo(lastKnownLocation) + " m");  // Time Difference
             // 속도 계산
             speed = mLastlocation.distanceTo(lastKnownLocation) / deltaTime;
-
+            //지나온 거리재는 구간
+            distanceMeters = mLastlocation.distanceTo(lastKnownLocation);
+            distanceKm = distanceMeters / 1000f;
+            distanceStart += distanceKm;
+            Log.d("distance",String.valueOf(distanceStart));
+            //Toast.makeText(this,"현재이동거리(Km) : "+distanceResult,Toast.LENGTH_SHORT).show();
             String formatLastDate = sdf.format(new Date(mLastlocation.getTime()));
             Log.d("Last Time",formatLastDate);
 
@@ -702,6 +728,60 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQ_ADD_ROUTING) {
+            if (resultCode == RESULT_OK) {
+                distanceStart = 0.0f;
+                Toast.makeText(this,"현재이동거리(Km) : "+distanceStart,Toast.LENGTH_SHORT).show();
+                routingx = data.getDoubleExtra("latitude_x",latitude);
+                routingy = data.getDoubleExtra("longitude_y",longitude);
+
+                MapPoint mapPoint = MapPoint.mapPointWithGeoCoord(routingx,routingy);
+                mMapView.setMapCenterPoint(mapPoint, true);
+
+                MapPOIItem maker = new MapPOIItem();
+                maker.setItemName("출발점");
+                maker.setTag(0);
+                maker.setMapPoint(mapPoint);
+                maker.setMarkerType(MapPOIItem.MarkerType.BluePin);
+                maker.setSelectedMarkerType(MapPOIItem.MarkerType.RedPin);
+                mMapView.addPOIItem(maker);
+                markers[0] = maker;
+
+            }else if (resultCode == RESULT_FIRST_USER){
+                distanceEnd = distanceStart;
+                routingx1 = data.getDoubleExtra("latitude_x",latitude);
+                routingy1 = data.getDoubleExtra("longitude_y",longitude);
+
+
+                MapPoint mapPoint = MapPoint.mapPointWithGeoCoord(routingx1,routingy1);
+                mMapView.setMapCenterPoint(mapPoint, true);
+
+                MapPOIItem maker2 = new MapPOIItem();
+                maker2.setItemName("도착점");
+                maker2.setTag(0);
+                maker2.setMapPoint(mapPoint);
+                //드래그할 수 있는 메소드
+                //maker2.setDraggable(true);
+                maker2.setMarkerType(MapPOIItem.MarkerType.BluePin);
+                maker2.setSelectedMarkerType(MapPOIItem.MarkerType.RedPin);
+                mMapView.addPOIItem(maker2);
+                markers[1] = maker2;
+                Toast.makeText(this,"현재총이동거리(Km) : "+distanceEnd,Toast.LENGTH_SHORT).show();
+                polyline.addPoint(MapPoint.mapPointWithGeoCoord(routingx,routingy));
+                polyline.addPoint(MapPoint.mapPointWithGeoCoord(routingx1,routingy1));
+                mMapView.addPolyline(polyline);
+                MapPointBounds mapPointBounds = new MapPointBounds(polyline.getMapPoints());
+                int padding = 100;
+                mMapView.moveCamera(CameraUpdateFactory.newMapPointBounds(mapPointBounds,padding));
+
+                //리스트뷰 값 전달
+                Intent intent = new Intent();
+                //String strNo = String.format("%f",distanceEnd);
+                intent.putExtra("myload_result",distanceEnd);
+                setResult(RESULT_OK, intent);
+            }
+        }
+
 
         switch (requestCode) {
 
@@ -730,6 +810,35 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
 
     }
 
+    //말풍선 클릭시 호출란들
+    @Override
+    public void onPOIItemSelected(MapView mapView, MapPOIItem mapPOIItem) {
 
+    }
+
+    @Override
+    public void onCalloutBalloonOfPOIItemTouched(MapView mapView, MapPOIItem mapPOIItem) {
+
+    }
+
+    @Override
+    public void onCalloutBalloonOfPOIItemTouched(MapView mapView, MapPOIItem mapPOIItem, MapPOIItem.CalloutBalloonButtonType calloutBalloonButtonType) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("마커삭제");
+        builder.setMessage("마커들을 모두 삭제하시겠습니까?");
+        builder.setPositiveButton("삭제", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                markers = null;
+            }
+        });
+        builder.setNegativeButton("취소", null);
+        builder.show();
+    }
+
+    @Override
+    public void onDraggablePOIItemMoved(MapView mapView, MapPOIItem mapPOIItem, MapPoint mapPoint) {
+
+    }
 }
 

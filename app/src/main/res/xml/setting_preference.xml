@@ -4,10 +4,6 @@
 
     <PreferenceCategory android:title="프로필">
 
-        <Preference
-            android:key="image_preference"
-            app:layout="@layout/setting_imageview"
-             />
         <EditTextPreference
             android:key="@string/name_key"
             android:title="이름"
