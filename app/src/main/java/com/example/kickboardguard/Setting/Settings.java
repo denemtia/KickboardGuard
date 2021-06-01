@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.preference.EditTextPreference;
@@ -16,6 +17,7 @@ import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
 
+import com.example.kickboardguard.ImformationData;
 import com.example.kickboardguard.Login;
 import com.example.kickboardguard.R;
 
@@ -34,11 +36,17 @@ public class Settings extends PreferenceFragmentCompat implements SharedPreferen
     AlertDialog.Builder builder;
     FirebaseUser currentUser;
     private FirebaseAuth mAuth;
+    ImformationData Imdata;
+    private TrackDBhelper trackDBhelper;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.setting_preference);
+
+        Imdata = new ImformationData();
+        trackDBhelper = new TrackDBhelper(getContext());
+        trackDBhelper.open();
         logout = (PreferenceScreen)findPreference("logout");
         email = (EditTextPreference)findPreference(getString(R.string.email_key));
         name = (EditTextPreference)findPreference(getString(R.string.name_key));
@@ -53,6 +61,9 @@ public class Settings extends PreferenceFragmentCompat implements SharedPreferen
         onSharedPreferenceChanged(sharedPrefs, getString(R.string.phone_key));
 
         mAuth = FirebaseAuth.getInstance();
+        Imdata.setEmail(email.getText());
+        Imdata.setName(name.getText());
+        Imdata.setPhone(phone.getText());
 
         email.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
@@ -84,6 +95,14 @@ public class Settings extends PreferenceFragmentCompat implements SharedPreferen
                 return true;
             }
         });
+
+        try {
+            trackDBhelper.trackDBallFetch1(Imdata.getName(),Imdata.getEmail(),Imdata.getPhone());
+            trackDBhelper.close();
+        }catch (Exception e){
+            e.printStackTrace();
+            Toast.makeText(getContext(),"DB가 정상적으로 저장되지 않았습니다.",Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

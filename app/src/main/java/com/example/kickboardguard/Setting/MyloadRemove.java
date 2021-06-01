@@ -1,14 +1,21 @@
 package com.example.kickboardguard.Setting;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,78 +25,94 @@ import androidx.preference.PreferenceManager;
 import com.example.kickboardguard.MainActivity;
 import com.example.kickboardguard.Myload;
 import com.example.kickboardguard.R;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 
 public class MyloadRemove extends AppCompatActivity {
-    ListViewAdapter adapter;
-    Button myload_btn;
-    float routing_data;
-    static final int REQ_MYLOAD = 1;
-    String name;
-    String email;
-    String phone;
+    private TextView textView;
+    private ListView listView;
+    private int i = -1;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.listview_myload);
+        textView = (TextView)findViewById(R.id.trackTitle);
+        listView = (ListView)findViewById(R.id.trackListview);
+        Button backbtn = (Button)findViewById(R.id.back_button2);
+        final TrackDBhelper trackDBhelper = new TrackDBhelper(this);
+        trackDBhelper.open();
+        Cursor cursor = trackDBhelper.fetchAllListOrderByDec();
+        if (cursor.getCount()==0){
+            textView.setText("저장된 기록이 없습니다.");
+            trackDBhelper.close();
+        }
+        else {
+            try {
+                while (!cursor.isAfterLast()) {
+                    TrackAdapter trackAdapter = new TrackAdapter(getApplicationContext(), cursor);
+                    listView.setAdapter(trackAdapter);
+                    i++;
+                    cursor.moveToNext();
+                }
+                textView.setText("저장된 기록 총 :"+" "+ i);
+                trackDBhelper.close();
+            }catch (IllegalStateException e){
+                e.printStackTrace();
+            }
+        }
 
-        ListView listView;
-
-        adapter = new ListViewAdapter();
-        routing_data = 0.0f;
-        name = null;
-        email = null;
-        phone = null;
-
-        myload_btn = (Button)findViewById(R.id.update_btn);
-        listView = (ListView) findViewById(R.id.listView);
-        listView.setAdapter(adapter);
-
-        myload_btn.setOnClickListener(new View.OnClickListener() {
+        backbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent myload = new Intent(getApplicationContext(), MainActivity.class);
-                startActivityForResult(myload,REQ_MYLOAD);
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
             }
         });
-
-        adapter.addItem(name,email,phone,routing_data);
-
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ListViewItem item = (ListViewItem) parent.getItemAtPosition(position);
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(MyloadRemove.this);
+                alertDialog.setTitle("선택해주세요");
+                alertDialog.setPositiveButton("목록 삭제", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        try {
+                            TrackDBhelper trackDBhelper = new TrackDBhelper(getApplicationContext());
+                            trackDBhelper.open();
+                            Cursor cursor = trackDBhelper.fetchAllListOrderByDec();
+                            TrackAdapter trackAdapter = new TrackAdapter(getApplicationContext(), cursor);
+                            Cursor cursor1 = (Cursor) trackAdapter.getItem(position);
+                            int index = cursor1.getInt(cursor1.getColumnIndex(TrackDBhelper.KEY_TABLE_ID));
+                            trackDBhelper.removeList(index);
+                            Cursor newcursor = trackDBhelper.fetchAllListOrderByDec();
+                            trackAdapter.changeCursor(newcursor);
+                            listView.setAdapter(trackAdapter);
+                            trackDBhelper.close();
+                            i--;
+                            textView.setText("저장된 기록 총 :" + " " + i);
+                            Toast.makeText(getApplicationContext(), "기록이 삭제 되었습니다.", Toast.LENGTH_SHORT).show();
+                        }catch (Exception e){
+                            e.printStackTrace();
+                            Toast.makeText(getApplicationContext(), "알 수 없는 오류 발생"+e, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+                alertDialog.setNegativeButton("취소", null);
+                alertDialog.create().show();
 
-                String nameStr = item.getname();
-                String emailStr = item.getemail();
-                String phoneStr = item.getphone();
-                Float myloadStr = item.getMyload();
             }
         });
-
-
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == REQ_MYLOAD){
-            if (resultCode == RESULT_OK){
-                routing_data = data.getFloatExtra("myload_result",0);
-            }
-        }
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
-    private void loadSharedPreferences(Context context){
-        SharedPreferences sharedPreferences2 = getSharedPreferences(getString(R.string.name_key),MODE_PRIVATE);
-        name = sharedPreferences2.getString("inputText","");
-        SharedPreferences sharedPreferences3 = getSharedPreferences(getString(R.string.email_key),MODE_PRIVATE);
-        email = sharedPreferences3.getString("inputText1","");
-        SharedPreferences sharedPreferences4 = getSharedPreferences(getString(R.string.phone_key),MODE_PRIVATE);
-        phone = sharedPreferences4.getString("inputText2","");
-
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 }

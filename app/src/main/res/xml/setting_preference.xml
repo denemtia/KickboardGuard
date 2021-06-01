@@ -25,8 +25,14 @@
         <PreferenceScreen
             android:key="@string/myload_key"
             android:title="내경로"
-            android:summary="내경로를 삭제할 수 있습니다."
-            android:icon="@drawable/myload"/>
+            android:summary="내경로를 확인할 수 있습니다."
+            android:icon="@drawable/myload"
+            >
+            <intent
+                android:targetPackage="com.example.kickboardguard"
+                android:targetClass="com.example.kickboardguard.Setting.MyloadRemove"
+                />
+        </PreferenceScreen>
 
     </PreferenceCategory>
 

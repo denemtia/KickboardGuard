@@ -39,6 +39,7 @@
         <activity android:name=".Myload"/>
         <activity android:name=".Setting.MyloadRemove"/>
 
+
         <meta-data
             android:name="com.kakao.sdk.AppKey"
             android:value="fb8a043512efb1234768f28365b2ed21" />

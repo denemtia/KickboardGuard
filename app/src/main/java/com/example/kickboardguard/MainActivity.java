@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Address;
@@ -12,6 +13,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.os.StrictMode;
@@ -54,13 +56,14 @@ import net.daum.mf.map.api.MapReverseGeoCoder;
 import net.daum.mf.map.api.MapView;
 import android.media.MediaPlayer;
 
+import com.example.kickboardguard.Setting.MyloadRemove;
 import com.example.kickboardguard.Setting.SettingActivity;
+import com.example.kickboardguard.Setting.TrackDBhelper;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity implements net.daum.mf.map.api.MapView.CurrentLocationEventListener, MapReverseGeoCoder.ReverseGeoCodingResultListener, LocationListener, MapView.POIItemEventListener {
 
     static final int REQ_ADD_ROUTING = 1;
-
     private static final String LOG_TAG = "MainActivity";
     String html = "http://apis.data.go.kr/B552468/acdntFreqocZone/getAcdntFreqocZone";
     private MapView mMapView;
@@ -94,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
     float  distanceStart;
     MapPolyline polyline;
     MapPOIItem [] markers;
-
+    private static ImformationData Imdata;
 
 
     @Override
@@ -177,6 +180,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
         polyline.setLineColor(Color.argb(128, 255, 51, 0));
         markers = new MapPOIItem[2];
         mMapView.setPOIItemEventListener(this);
+        Imdata = new ImformationData();
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -746,9 +750,19 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
                 maker.setSelectedMarkerType(MapPOIItem.MarkerType.RedPin);
                 mMapView.addPOIItem(maker);
                 markers[0] = maker;
-
             }else if (resultCode == RESULT_FIRST_USER){
                 distanceEnd = distanceStart;
+                Imdata.setDistance(distanceEnd);
+                    try {
+                        TrackDBhelper trackDBhelper = new TrackDBhelper(this);
+                        trackDBhelper.open();
+                        trackDBhelper.trackDBallFetch(Imdata.returnDistance());
+                        trackDBhelper.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getApplicationContext(), "DB가 정상적으로 저장되지 않았습니다.", Toast.LENGTH_SHORT).show();
+                    }
+
                 routingx1 = data.getDoubleExtra("latitude_x",latitude);
                 routingy1 = data.getDoubleExtra("longitude_y",longitude);
 
@@ -767,6 +781,8 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
                 mMapView.addPOIItem(maker2);
                 markers[1] = maker2;
                 Toast.makeText(this,"현재총이동거리(Km) : "+distanceEnd,Toast.LENGTH_SHORT).show();
+
+                //선연결 부분
                 polyline.addPoint(MapPoint.mapPointWithGeoCoord(routingx,routingy));
                 polyline.addPoint(MapPoint.mapPointWithGeoCoord(routingx1,routingy1));
                 mMapView.addPolyline(polyline);
@@ -774,11 +790,11 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
                 int padding = 100;
                 mMapView.moveCamera(CameraUpdateFactory.newMapPointBounds(mapPointBounds,padding));
 
-                //리스트뷰 값 전달
-                Intent intent = new Intent();
-                //String strNo = String.format("%f",distanceEnd);
-                intent.putExtra("myload_result",distanceEnd);
-                setResult(RESULT_OK, intent);
+//                //리스트뷰 값 전달
+//               Intent intent = new Intent(this,MyloadRemove.class);
+//               String strNo = String.format("%f",distanceEnd);
+//               intent.putExtra("myload",strNo);
+
             }
         }
 
@@ -830,6 +846,9 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 markers = null;
+                Intent intent = new Intent(getApplicationContext(), Myload.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
             }
         });
         builder.setNegativeButton("취소", null);
@@ -839,6 +858,10 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
     @Override
     public void onDraggablePOIItemMoved(MapView mapView, MapPOIItem mapPOIItem, MapPoint mapPoint) {
 
+    }
+
+    public static ImformationData getData(){
+        return Imdata;
     }
 }
 

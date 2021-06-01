@@ -9,6 +9,8 @@ import android.widget.Button;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.kickboardguard.Setting.MyloadRemove;
+
 import net.daum.mf.map.api.MapPoint;
 import net.daum.mf.map.api.MapView;
 
@@ -32,10 +34,10 @@ public class Myload extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
             }
-        });load_start.setOnClickListener(new View.OnClickListener() {
+        });
+        load_start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
