@@ -50,6 +50,7 @@ import net.daum.mf.map.api.MapView;
 import android.media.MediaPlayer;
 
 import com.example.kickboardguard.Setting.SettingActivity;
+import com.example.kickboardguard.Setting.Settings;
 
 public class MainActivity extends AppCompatActivity implements net.daum.mf.map.api.MapView.CurrentLocationEventListener, MapReverseGeoCoder.ReverseGeoCodingResultListener, LocationListener {
 
@@ -135,6 +136,8 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
         // 메뉴 설정 ################################################################################
 
 
+
+
         // 카카오 맵 설정 ############################################################################
         mMapView = (net.daum.mf.map.api.MapView) findViewById(R.id.map_view);
         //mMapView.setDaumMapApiKey(MapApiConst.DAUM_MAPS_ANDROID_APP_API_KEY);
@@ -150,6 +153,9 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
         // 카카오 맵 설정 ############################################################################
 
 
+
+
+
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -161,6 +167,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
         boolean isEnable = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, this);
+
 
 
         // 공공 데이터 ##############################################################################
@@ -320,6 +327,9 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
             Log.i("에러", "에러발생");
         }
         // 공공 데이터 ##############################################################################
+
+
+
 
 
     }
@@ -518,7 +528,9 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
         Log.d("data test", sb.toString());
 
 
+
     }
+
 
 
     @Override
@@ -565,6 +577,8 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
     private void onFinishReverseGeoCoding(String result) {
 //        Toast.makeText(LocationDemoActivity.this, "Reverse Geo-coding : " + result, Toast.LENGTH_SHORT).show();
     }
+
+
 
 
     /*
@@ -655,6 +669,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
         }
 
     }
+
 
 
     //여기부터는 GPS 활성화를 위한 메소드들

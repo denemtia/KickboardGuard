@@ -29,6 +29,7 @@ import android.widget.NumberPicker;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -110,6 +111,62 @@ public class Sensor extends Fragment {
         final RadioGroup rg = (RadioGroup)view.findViewById(R.id.radioGroup1);
         Button b = (Button)view.findViewById(R.id.button1);
         final TextView tv = (TextView)view.findViewById(R.id.textView2);
+        SeekBar seekBar  = (SeekBar)view.findViewById(R.id.seekBar1);
+
+
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                // onProgressChange - Seekbar 값 변경될때마다 호출
+                Log.d("시크바", String.format("onProgressChanged 값 변경 중 : progress [%d] fromUser [%b]", progress, fromUser));
+
+            }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                // onStartTeackingTouch - SeekBar 값 변경위해 첫 눌림에 호출
+                Log.d("시크바", String.format("onStartTrackingTouch 값 변경 시작 : progress [%d]", seekBar.getProgress()));
+
+            }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                // onStopTrackingTouch - SeekBar 값 변경 끝나고 드래그 떼면 호출
+                Log.d("시크바", String.format("onStopTrackingTouch 값 변경 종료: progress [%d]", seekBar.getProgress()));
+                switch (seekBar.getProgress()){
+                    case 1:
+                        tv.setText("결과: "+1100);
+                        break;
+                    case 2:
+                        tv.setText("결과: "+1200);
+                        break;
+                    case 3:
+                        tv.setText("결과: "+1300);
+                        break;
+                    case 4:
+                        tv.setText("결과: "+1400);
+                        break;
+                    case 5:
+                        tv.setText("결과: "+1500);
+                        break;
+                    case 6:
+                        tv.setText("결과: "+1600);
+                        break;
+                    case 7:
+                        tv.setText("결과: "+1700);
+                        break;
+                    case 8:
+                        tv.setText("결과: "+1800);
+                        break;
+                    case 9:
+                        tv.setText("결과: "+1900);
+                        break;
+                    case 10:
+                        tv.setText("결과: "+2000);
+                        break;
+
+                }
+            }
+        });
+
 
         b.setOnClickListener(new View.OnClickListener() {
             @Override

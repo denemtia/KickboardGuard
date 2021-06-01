@@ -27,6 +27,14 @@
         android:text="거리 선택"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
+    <SeekBar
+        android:id="@+id/seekBar1"
+        style="@style/Widget.AppCompat.SeekBar.Discrete"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="10"
+        android:progress="3" />
+
     <RadioGroup
         android:id="@+id/radioGroup1"
         android:layout_width="wrap_content"

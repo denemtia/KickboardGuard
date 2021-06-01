@@ -7,19 +7,11 @@
     android:id="@+id/layout_login"
     tools:context=".Login">
 
-    <TextView
-        android:id="@+id/tv_contents"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
-        android:text="아래에는 이미지뷰가 보입니다."/>
 
     <TextView
         android:id="@+id/iv_glide"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tv_contents"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp"/>
 
@@ -27,7 +19,14 @@
         android:id="@+id/signInButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/iv_glide"
-        android:layout_centerHorizontal="true" />
+        android:layout_below="@+id/imageView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="50dp" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="408dp"
+        tools:srcCompat="@drawable/login" />
 
 </RelativeLayout>
