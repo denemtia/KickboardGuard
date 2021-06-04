@@ -75,7 +75,6 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
     private Home home;
     private Helmet helmet;
     private Sensor sensor;
-    private Myload myload;
 
     private LocationManager locationManager;
     private Location mLastlocation = null;
@@ -98,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
     MapPolyline polyline;
     MapPOIItem [] markers;
     private static ImformationData Imdata;
+    int poitemNum;
 
 
     @Override
@@ -110,7 +110,6 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
         home = new Home();
         helmet = new Helmet();
         sensor = new Sensor();
-        myload = new Myload();
         // 프레그먼트 설정 ##########################################################################
 
 
@@ -181,6 +180,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
         markers = new MapPOIItem[2];
         mMapView.setPOIItemEventListener(this);
         Imdata = new ImformationData();
+        poitemNum = 0;
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -499,6 +499,17 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
         }
         // 위치정보 업데이트
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000,0, this);
+        if (poitemNum == 1){
+            //선연결 부분
+            polyline.addPoint(MapPoint.mapPointWithGeoCoord(routingx,routingy));
+            polyline.addPoint(MapPoint.mapPointWithGeoCoord(routingx1,routingy1));
+            mMapView.addPolyline(polyline);
+            MapPointBounds mapPointBounds = new MapPointBounds(polyline.getMapPoints());
+            int padding = 100;
+            mMapView.moveCamera(CameraUpdateFactory.newMapPointBounds(mapPointBounds,padding));
+
+
+        }
     }
 
     @Override
@@ -741,7 +752,6 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
 
                 MapPoint mapPoint = MapPoint.mapPointWithGeoCoord(routingx,routingy);
                 mMapView.setMapCenterPoint(mapPoint, true);
-
                 MapPOIItem maker = new MapPOIItem();
                 maker.setItemName("출발점");
                 maker.setTag(0);
@@ -754,6 +764,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
                 distanceEnd = distanceStart;
                 Imdata.setDistance(distanceEnd);
                     try {
+                        Log.d("들어옴1","들어옴1");
                         TrackDBhelper trackDBhelper = new TrackDBhelper(this);
                         trackDBhelper.open();
                         trackDBhelper.trackDBallFetch(Imdata.returnDistance());
@@ -781,14 +792,16 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
                 mMapView.addPOIItem(maker2);
                 markers[1] = maker2;
                 Toast.makeText(this,"현재총이동거리(Km) : "+distanceEnd,Toast.LENGTH_SHORT).show();
+                poitemNum = 1;
 
-                //선연결 부분
-                polyline.addPoint(MapPoint.mapPointWithGeoCoord(routingx,routingy));
-                polyline.addPoint(MapPoint.mapPointWithGeoCoord(routingx1,routingy1));
-                mMapView.addPolyline(polyline);
-                MapPointBounds mapPointBounds = new MapPointBounds(polyline.getMapPoints());
-                int padding = 100;
-                mMapView.moveCamera(CameraUpdateFactory.newMapPointBounds(mapPointBounds,padding));
+
+//                //선연결 부분
+//                polyline.addPoint(MapPoint.mapPointWithGeoCoord(routingx,routingy));
+//                polyline.addPoint(MapPoint.mapPointWithGeoCoord(routingx1,routingy1));
+//                mMapView.addPolyline(polyline);
+//                MapPointBounds mapPointBounds = new MapPointBounds(polyline.getMapPoints());
+//                int padding = 100;
+//                mMapView.moveCamera(CameraUpdateFactory.newMapPointBounds(mapPointBounds,padding));
 
 //                //리스트뷰 값 전달
 //               Intent intent = new Intent(this,MyloadRemove.class);

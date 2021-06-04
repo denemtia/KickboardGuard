@@ -56,6 +56,7 @@ public class TrackDBhelper {
     public TrackDBhelper open() throws SQLException {
         mDbHelper = new DatabaseHelper(mCtx);
         mDb = mDbHelper.getWritableDatabase();
+        Log.d("들어옴2","들어옴2");
         return this;
     }
 
