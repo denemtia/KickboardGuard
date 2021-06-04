@@ -19,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -94,6 +95,7 @@ public class Helmet extends Fragment {
                 checkBluetooth();
             }
         });
+        ImageView imageView = (ImageView) view.findViewById(R.id.imageView);
 
         Button on_button = (Button) view.findViewById(R.id.helmet_on);
         on_button.setOnClickListener(new View.OnClickListener() {
@@ -101,6 +103,7 @@ public class Helmet extends Fragment {
             public void onClick(View view) {
                 String msg;
                 msg = "ON";
+                imageView.setImageResource(R.drawable.helemet);
                 try{
                     mOutputStream.write(msg.getBytes());
 
@@ -119,6 +122,7 @@ public class Helmet extends Fragment {
             public void onClick(View view) {
                 String msg;
                 msg = "OFF";
+                imageView.setImageResource(R.drawable.helemet2);
                 try{
                     mOutputStream.write(msg.getBytes());
                 }catch(Exception e){
