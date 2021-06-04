@@ -16,7 +16,7 @@
         <ImageView
             android:id="@+id/imageView2"
             android:layout_width="match_parent"
-            android:layout_height="525dp"
+            android:layout_height="410dp"
             app:srcCompat="@drawable/login" />
 
         <com.google.android.gms.common.SignInButton
