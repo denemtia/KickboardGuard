@@ -2,17 +2,11 @@ package com.example.kickboardguard;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-
-import com.example.kickboardguard.Setting.MyloadRemove;
-
-import net.daum.mf.map.api.MapPoint;
-import net.daum.mf.map.api.MapView;
 
 public class Myload extends AppCompatActivity {
 

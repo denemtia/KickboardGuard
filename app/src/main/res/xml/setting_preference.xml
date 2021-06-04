@@ -4,23 +4,17 @@
 
     <PreferenceCategory android:title="프로필">
 
-        <EditTextPreference
+        <PreferenceScreen
             android:key="@string/name_key"
             android:title="이름"
             android:summary="이름을 적어주세요"
             android:icon="@drawable/person"/>
 
-       <EditTextPreference
+       <PreferenceScreen
            android:key="@string/email_key"
            android:title="이메일."
            android:summary="이메일을 적어주세요."
            android:icon="@drawable/email"/>
-
-        <EditTextPreference
-            android:key="@string/phone_key"
-            android:title="전화번호"
-            android:summary="전화번호를 입력해주세요"
-            android:icon="@drawable/phone"/>
 
         <PreferenceScreen
             android:key="@string/myload_key"

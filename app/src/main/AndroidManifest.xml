@@ -37,7 +37,6 @@
         <activity android:name=".MainActivity"/>
         <activity android:name=".Setting.SettingActivity"/>
         <activity android:name=".Myload"/>
-        <activity android:name=".Setting.MyloadRemove"/>
 
 
         <meta-data

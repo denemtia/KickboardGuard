@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -30,13 +31,16 @@ public class Settings extends PreferenceFragmentCompat implements SharedPreferen
     private static final String TAG = "Settings";
 
     PreferenceScreen logout;
-    EditTextPreference email;
-    EditTextPreference name;
-    EditTextPreference phone;
+    PreferenceScreen email;
+    PreferenceScreen name;
     AlertDialog.Builder builder;
     FirebaseUser currentUser;
+    FirebaseUser user;
     private FirebaseAuth mAuth;
     ImformationData Imdata;
+    String name1;
+    String email1;
+    Uri photoUrl;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -45,9 +49,8 @@ public class Settings extends PreferenceFragmentCompat implements SharedPreferen
 
         Imdata = new ImformationData();
         logout = (PreferenceScreen)findPreference("logout");
-        email = (EditTextPreference)findPreference(getString(R.string.email_key));
-        name = (EditTextPreference)findPreference(getString(R.string.name_key));
-        phone = (EditTextPreference)findPreference(getString(R.string.phone_key));
+        email = (PreferenceScreen)findPreference(getString(R.string.email_key));
+        name = (PreferenceScreen)findPreference(getString(R.string.name_key));
         setHasOptionsMenu(true);
 
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getContext());
@@ -55,34 +58,19 @@ public class Settings extends PreferenceFragmentCompat implements SharedPreferen
         //갱신하는 곳
         onSharedPreferenceChanged(sharedPrefs, getString(R.string.email_key));
         onSharedPreferenceChanged(sharedPrefs, getString(R.string.name_key));
-        onSharedPreferenceChanged(sharedPrefs, getString(R.string.phone_key));
 
         mAuth = FirebaseAuth.getInstance();
-        Imdata.setEmail(email.getText());
-        Imdata.setName(name.getText());
-        Imdata.setPhone(phone.getText());
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+             name1 = user.getDisplayName();
+             email1 = user.getEmail();
+             photoUrl = user.getPhotoUrl();
 
-        email.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                email.setSummary(email.getText());
-                return true;
-            }
-        });
-        name.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                name.setSummary(name.getText());
-                return true;
-            }
-        });
-        phone.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                phone.setSummary(phone.getText());
-                return true;
-            }
-        });
+            boolean emailVerified = user.isEmailVerified();
+        }
+
+        email.setSummary(email1);
+        name.setSummary(name1);
 
         logout.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -137,10 +125,10 @@ public class Settings extends PreferenceFragmentCompat implements SharedPreferen
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        Preference pref = findPreference(key);
-        if (pref instanceof EditTextPreference){
-            EditTextPreference listPref = (EditTextPreference) pref;
-            pref.setSummary(listPref.getText());
-        }
+//        Preference pref = findPreference(key);
+//        if (pref instanceof PreferenceScreen){
+//            EditTextPreference listPref = (EditTextPreference) pref;
+//            pref.setSummary(listPref.getText());
+//        }
     }
 }
