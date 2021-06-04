@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Address;
@@ -13,9 +12,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.Gravity;
@@ -45,7 +42,6 @@ import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
-import net.daum.mf.map.api.CalloutBalloonAdapter;
 import net.daum.mf.map.api.CameraUpdateFactory;
 import net.daum.mf.map.api.MapCircle;
 import net.daum.mf.map.api.MapPOIItem;
@@ -56,10 +52,7 @@ import net.daum.mf.map.api.MapReverseGeoCoder;
 import net.daum.mf.map.api.MapView;
 import android.media.MediaPlayer;
 
-import com.example.kickboardguard.Setting.MyloadRemove;
 import com.example.kickboardguard.Setting.SettingActivity;
-import com.example.kickboardguard.Setting.TrackDBhelper;
-import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity implements net.daum.mf.map.api.MapView.CurrentLocationEventListener, MapReverseGeoCoder.ReverseGeoCodingResultListener, LocationListener, MapView.POIItemEventListener {
 
@@ -763,16 +756,6 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
             }else if (resultCode == RESULT_FIRST_USER){
                 distanceEnd = distanceStart;
                 Imdata.setDistance(distanceEnd);
-                    try {
-                        Log.d("들어옴1","들어옴1");
-                        TrackDBhelper trackDBhelper = new TrackDBhelper(this);
-                        trackDBhelper.open();
-                        trackDBhelper.trackDBallFetch(Imdata.returnDistance());
-                        trackDBhelper.close();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Toast.makeText(getApplicationContext(), "DB가 정상적으로 저장되지 않았습니다.", Toast.LENGTH_SHORT).show();
-                    }
 
                 routingx1 = data.getDoubleExtra("latitude_x",latitude);
                 routingy1 = data.getDoubleExtra("longitude_y",longitude);
@@ -859,6 +842,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 markers = null;
+                poitemNum = 0;
                 Intent intent = new Intent(getApplicationContext(), Myload.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
@@ -877,4 +861,5 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
         return Imdata;
     }
 }
+
 

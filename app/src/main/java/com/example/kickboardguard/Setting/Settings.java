@@ -37,7 +37,6 @@ public class Settings extends PreferenceFragmentCompat implements SharedPreferen
     FirebaseUser currentUser;
     private FirebaseAuth mAuth;
     ImformationData Imdata;
-    private TrackDBhelper trackDBhelper;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -45,8 +44,6 @@ public class Settings extends PreferenceFragmentCompat implements SharedPreferen
         addPreferencesFromResource(R.xml.setting_preference);
 
         Imdata = new ImformationData();
-        trackDBhelper = new TrackDBhelper(getContext());
-        trackDBhelper.open();
         logout = (PreferenceScreen)findPreference("logout");
         email = (EditTextPreference)findPreference(getString(R.string.email_key));
         name = (EditTextPreference)findPreference(getString(R.string.name_key));
@@ -95,14 +92,6 @@ public class Settings extends PreferenceFragmentCompat implements SharedPreferen
                 return true;
             }
         });
-
-        try {
-            trackDBhelper.trackDBallFetch1(Imdata.getName(),Imdata.getEmail(),Imdata.getPhone());
-            trackDBhelper.close();
-        }catch (Exception e){
-            e.printStackTrace();
-            Toast.makeText(getContext(),"DB가 정상적으로 저장되지 않았습니다.",Toast.LENGTH_SHORT).show();
-        }
     }
 
     @Override
