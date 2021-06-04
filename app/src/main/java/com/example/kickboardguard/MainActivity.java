@@ -30,7 +30,10 @@ import java.net.URLEncoder;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -44,6 +47,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
 import net.daum.mf.map.api.MapCircle;
+import net.daum.mf.map.api.MapPOIItem;
 import net.daum.mf.map.api.MapPoint;
 import net.daum.mf.map.api.MapReverseGeoCoder;
 import net.daum.mf.map.api.MapView;
@@ -53,6 +57,18 @@ import com.example.kickboardguard.Setting.SettingActivity;
 import com.example.kickboardguard.Setting.Settings;
 
 public class MainActivity extends AppCompatActivity implements net.daum.mf.map.api.MapView.CurrentLocationEventListener, MapReverseGeoCoder.ReverseGeoCodingResultListener, LocationListener {
+    int num=0;
+    String bar[];// 위도 경도를 분할하기 위해 dangermapxy를 배열화 시킬떄 저장
+    String xy[];//위도 경도를 나눠서 저장 ex xy[0]=위도,xy[1]=경도
+    ArrayList<Double>Ddistance=new ArrayList<>();//거리값을 저장
+    ArrayList<String>dangermapXY=new ArrayList<>();//"위도/경도" 이런식으로 저장
+    public void dangermaplist(String a , String b){    // "위도/경도"형식으로 dangermap에 저장하는 함수
+        String result= a+"/"+b;
+        dangermapXY.add(result);
+
+    }
+
+
 
     private static final String LOG_TAG = "MainActivity";
     String html = "http://apis.data.go.kr/B552468/acdntFreqocZone/getAcdntFreqocZone";
@@ -62,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
     private static final int PERMISSIONS_REQUEST_CODE = 100;
     String[] REQUIRED_PERMISSIONS = {Manifest.permission.ACCESS_FINE_LOCATION};
 
+
     private Home home;
     private Helmet helmet;
     private Sensor sensor;
@@ -70,10 +87,11 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
 
     private LocationManager locationManager;
     private Location mLastlocation = null;
+
+
     private double speed;
     private long backbtntime = 0;
     Geocoder g = new Geocoder(this);
-
 
     Location location;
     double latitude;
@@ -87,6 +105,9 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+
 
 
         // 프레그먼트 설정 ##########################################################################
@@ -307,8 +328,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
                                     + "\n 다발구역버전 : " + freqocZoneVer + "\n 다발구역아이디 : " + freqocZoneId + "\n 다발구역명 : " + freqocZoneNm
                                     + "\n 시군구코드 : " + signguCode + "\n 시군구명 : " + signguNm + "\n 사고건수 : " + acdntCo
                                     + "\n 중심X : " + centerX + "\n 중심Y : " + centerY + "\n" + "\n 구역반경 : " + zoneRds + "\n");
-
-
+                            dangermaplist(centerX , centerY);
                             MapCircle circle = new MapCircle(
                                     MapPoint.mapPointWithGeoCoord(Double.parseDouble(centerY), Double.parseDouble(centerX)), // center
                                     Integer.parseInt(zoneRds), // radius
@@ -316,11 +336,17 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
                                     Color.argb(128, 0, 255, 0) // fillColor
                             );
                             //circle.setTag(Integer.parseInt(freqocZoneId));
+
                             mMapView.addCircle(circle);
 
                         }
+
                         break;
                 }
+                listtoarr();
+                rearr();
+
+
                 parserEvent = parser.next();
             }
         } catch (Exception e) {
@@ -338,10 +364,13 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
     public void onBackPressed() {
         long curTime = System.currentTimeMillis();
         long gapTime = curTime - backbtntime;
+        String b[]=new String[2];
 
         if (0 <= gapTime && 2000 >= gapTime) {
             super.onBackPressed();
         } else {
+
+            printarr();
             backbtntime = curTime;
             Toast.makeText(this, "한번 더 누르면 종료됩니다", Toast.LENGTH_SHORT).show();
 
@@ -386,10 +415,12 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
     // 속도 설정 #################################################################################
     @Override
     public void onLocationChanged(Location location) {
+        int a=dangermapXY.size();
         gpsTracker = new GpsTracker(MainActivity.this);
         double latitude = gpsTracker.getLatitude();
         double longitude = gpsTracker.getLongitude();
         String address = getCurrentAddress(latitude, longitude);
+        double d;
         // 속도 설정 #################################################################################
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
         double deltaTime = 0;
@@ -398,12 +429,14 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
             return;
         }
 
+
         Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         //  getSpeed() 함수를 이용하여 속도를 계산
         if (lastKnownLocation != null) {
             sdf = new SimpleDateFormat("HH:mm:ss");
             String formatDate = sdf.format(new Date(lastKnownLocation.getTime()));
             Log.d("Time", formatDate);  //Time
+
         }
         double getSpeed = Double.parseDouble(String.format("%.3f", lastKnownLocation.getSpeed()));
         Log.d("Get Speed", String.valueOf(getSpeed));  //Get Speed
@@ -432,6 +465,34 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
 
 
             }
+            Location locationd=new Location("");
+            int size=0;
+            for(int x=0;x<dangermapXY.size();x++){ //위도 경도를 입력하고 distanceTo함수로 거리를 알아낸후 Ddistance리스트에 넣어줌
+                locationd.setLongitude(Double.parseDouble(xy[size]));
+                locationd.setLongitude(Double.parseDouble(xy[size+1]));
+                d=locationd.distanceTo(lastKnownLocation);
+                size=size+2;
+               Ddistance.add(d);
+            }
+            Iterator it=Ddistance.iterator(); //Ddistance값중 200m가 있을시 토스트메시지와 알람소리를 띄우고 그 데이터를 삭제
+            while(it.hasNext()){
+                double value=(double)it.next();
+                if(value==200){
+                    MediaPlayer player = MediaPlayer.create(this, R.raw.dingdong);
+                    player.start();
+                    Toast.makeText(this.getApplicationContext(), "전방 200M 사고다발 지역입니다",
+                            Toast.LENGTH_LONG).show();
+                    it.remove();
+
+                }
+
+            }
+
+
+
+
+
+
             Log.d("Cal Speed", String.valueOf(kmhcalSpeed));
         }
         // 현재위치를 지난 위치로 변경
@@ -794,5 +855,54 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
 
         }
     }
+    public void listtoarr(){ //bar에 dangermapxy데이터를 넣음
+        bar=new String[dangermapXY.size()];
+        int size=0;
+
+        for(String item:dangermapXY){
+            bar[size++]=item;
+        }
+
+
+    }
+    public void rearr(){ //bar배열에 위도 경도를 나눠 xy에 저장
+        int a=dangermapXY.size()*2;
+        xy=new String[a];
+
+        int size=0;
+
+        for(int i=0;i<dangermapXY.size();i++){
+            xy[size]=bar[i].substring(0,10);
+            xy[size+1]=bar[i].substring(11,20);
+            size=size+2;
+        }
+
+
+    }
+    public void printarr(){
+        int b=dangermapXY.size()*2;
+        for(int a=0;a<dangermapXY.size();a++){
+            System.out.println(bar[a]);
+
+        }
+        for(int z=0;z<b;z++){
+            System.out.println(xy[z]);
+
+        }
+
+
+
+
+    }
+    public void printarray(){
+
+
+        for(String s:dangermapXY){
+            System.out.println(s);
+        }
+
+
+    }
+
 }
 
