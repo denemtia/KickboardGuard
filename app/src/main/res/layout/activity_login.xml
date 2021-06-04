@@ -19,12 +19,6 @@
             android:layout_height="525dp"
             app:srcCompat="@drawable/login" />
 
-        <TextView
-            android:id="@+id/iv_glide"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="30dp" />
-
         <com.google.android.gms.common.SignInButton
             android:id="@+id/signInButton"
             android:layout_width="wrap_content"
