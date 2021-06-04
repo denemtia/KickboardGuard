@@ -7,7 +7,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.preference.EditTextPreference;
@@ -40,6 +42,30 @@ public class Settings extends PreferenceFragmentCompat implements SharedPreferen
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.setting_preference);
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            // Name, email address, and profile photo Url
+            String Username = user.getDisplayName();
+            String Useremail = user.getEmail();
+            Uri photoUrl = user.getPhotoUrl();
+            Log.d("name",Username);
+            Log.d("email",Useremail);
+
+            // Check if user's email is verified
+            boolean emailVerified = user.isEmailVerified();
+
+            // The user's ID, unique to the Firebase project. Do NOT use this value to
+            // authenticate with your backend server, if you have one. Use
+            // FirebaseUser.getIdToken() instead.
+            String uid = user.getUid();
+            Log.d("uid",uid);
+        }else {
+            Log.d("로그인 에러","로그인 데이터 가져오기 실패");
+        }
+
+
+
         imageViewPreference = (Preference)findPreference("image_preference");
         logout = (PreferenceScreen)findPreference("logout");
         email = (EditTextPreference)findPreference(getString(R.string.email_key));

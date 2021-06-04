@@ -12,6 +12,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.os.StrictMode;
@@ -51,6 +52,8 @@ import android.media.MediaPlayer;
 
 import com.example.kickboardguard.Setting.SettingActivity;
 import com.example.kickboardguard.Setting.Settings;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity implements net.daum.mf.map.api.MapView.CurrentLocationEventListener, MapReverseGeoCoder.ReverseGeoCodingResultListener, LocationListener {
 
@@ -87,6 +90,32 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        // 사용자 프로필 가져오기 ###################################################################
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            // Name, email address, and profile photo Url
+            String name = user.getDisplayName();
+            String email = user.getEmail();
+            Uri photoUrl = user.getPhotoUrl();
+            Log.d("name",name);
+            Log.d("email",email);
+
+            // Check if user's email is verified
+            boolean emailVerified = user.isEmailVerified();
+
+            // The user's ID, unique to the Firebase project. Do NOT use this value to
+            // authenticate with your backend server, if you have one. Use
+            // FirebaseUser.getIdToken() instead.
+            String uid = user.getUid();
+            Log.d("uid",uid);
+        }else {
+            Log.d("로그인 에러","로그인 데이터 가져오기 실패");
+        }
+
+
 
 
         // 프레그먼트 설정 ##########################################################################
