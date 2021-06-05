@@ -36,6 +36,7 @@
         
         <activity android:name=".MainActivity"/>
         <activity android:name=".Setting.SettingActivity"/>
+        <activity android:name=".Setting.MyloadListView"/>
         <activity android:name=".Myload"/>
 
 

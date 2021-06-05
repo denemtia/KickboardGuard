@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Address;
@@ -52,7 +53,9 @@ import net.daum.mf.map.api.MapReverseGeoCoder;
 import net.daum.mf.map.api.MapView;
 import android.media.MediaPlayer;
 
+import com.example.kickboardguard.Setting.MyloadListView;
 import com.example.kickboardguard.Setting.SettingActivity;
+import com.google.gson.Gson;
 
 public class MainActivity extends AppCompatActivity implements net.daum.mf.map.api.MapView.CurrentLocationEventListener, MapReverseGeoCoder.ReverseGeoCodingResultListener, LocationListener, MapView.POIItemEventListener {
 
@@ -777,17 +780,8 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
                 Toast.makeText(this,"현재총이동거리(Km) : "+distanceEnd,Toast.LENGTH_SHORT).show();
                 poitemNum = 1;
 
-
-//                //선연결 부분
-//                polyline.addPoint(MapPoint.mapPointWithGeoCoord(routingx,routingy));
-//                polyline.addPoint(MapPoint.mapPointWithGeoCoord(routingx1,routingy1));
-//                mMapView.addPolyline(polyline);
-//                MapPointBounds mapPointBounds = new MapPointBounds(polyline.getMapPoints());
-//                int padding = 100;
-//                mMapView.moveCamera(CameraUpdateFactory.newMapPointBounds(mapPointBounds,padding));
-
 //                //리스트뷰 값 전달
-//               Intent intent = new Intent(this,MyloadRemove.class);
+//               Intent intent = new Intent(this, MyloadListView.class);
 //               String strNo = String.format("%f",distanceEnd);
 //               intent.putExtra("myload",strNo);
 
@@ -857,9 +851,12 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
 
     }
 
+    //클래스에 값을 전달하기 위한 Getter
+
     public static ImformationData getData(){
         return Imdata;
     }
+
 }
 
 

@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -20,6 +21,7 @@ import androidx.preference.PreferenceScreen;
 
 import com.example.kickboardguard.ImformationData;
 import com.example.kickboardguard.Login;
+import com.example.kickboardguard.MainActivity;
 import com.example.kickboardguard.R;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -37,17 +39,16 @@ public class Settings extends PreferenceFragmentCompat implements SharedPreferen
     FirebaseUser currentUser;
     FirebaseUser user;
     private FirebaseAuth mAuth;
-    ImformationData Imdata;
     String name1;
     String email1;
     Uri photoUrl;
+    ImformationData data;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.setting_preference);
 
-        Imdata = new ImformationData();
         logout = (PreferenceScreen)findPreference("logout");
         email = (PreferenceScreen)findPreference(getString(R.string.email_key));
         name = (PreferenceScreen)findPreference(getString(R.string.name_key));
@@ -71,6 +72,12 @@ public class Settings extends PreferenceFragmentCompat implements SharedPreferen
 
         email.setSummary(email1);
         name.setSummary(name1);
+
+        //데이터 가져오기
+//        data.setName(name1);
+//        data.setEmail(email1);
+//        Log.d("들어옴", data.getName()+data.getEmail()+data.getDistance());
+
 
         logout.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override

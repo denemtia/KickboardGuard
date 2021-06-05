@@ -1,39 +1,28 @@
 package com.example.kickboardguard;
 
+import com.google.firebase.database.Exclude;
+
+import java.util.HashMap;
+import java.util.Map;
+
 // 값들을 다른 엑티비티에 이동할수 있게 하는 통로
 public class ImformationData {
     private float distance;
     private String name;
-    private String phone;
     private String email;
-    private onGpsServiceUpdate onGpsServiceUpdate;
 
-    public ImformationData() {
+    public ImformationData(){
         distance = 0;
         name = null;
-        phone = null;
         email = null;
     }
-    public interface onGpsServiceUpdate{
-        public void update();
+
+    public ImformationData(String name, String email, float distance) {
+      this.name = name;
+      this.email = email;
+      this.distance = distance;
     }
 
-    public void setOnGpsServiceUpdate(onGpsServiceUpdate onGpsServiceUpdate){
-        this.onGpsServiceUpdate = onGpsServiceUpdate;
-    }
-
-    public void update(){
-        onGpsServiceUpdate.update();
-    }
-
-    public ImformationData(onGpsServiceUpdate onGpsServiceUpdate){
-        this();
-        setOnGpsServiceUpdate(onGpsServiceUpdate);
-    }
-
-    public float returnDistance(){
-        return distance;
-    }
 
     public void setDistance(float distance) {
         this.distance = distance;
@@ -45,10 +34,6 @@ public class ImformationData {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
     }
 
     public float getDistance() {
@@ -63,7 +48,13 @@ public class ImformationData {
         return name;
     }
 
-    public String getPhone() {
-        return phone;
+
+    @Exclude
+    public Map<String, Object> toMap() {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("name", name);
+        result.put("email",email);
+        result.put("distance",distance);
+        return result;
     }
 }

@@ -6,9 +6,12 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.example.kickboardguard.Setting.Settings;
 
 
 public class Home extends Fragment {
@@ -18,6 +21,7 @@ public class Home extends Fragment {
     public void onAttach(Context context){
         super.onAttach(context);
         activit = (MainActivity)getActivity();
+
     }
 
     @Override
