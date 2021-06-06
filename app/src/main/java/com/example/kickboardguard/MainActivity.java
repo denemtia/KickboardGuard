@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
     MapPolyline polyline;
     MapPOIItem [] markers;
     private static ImformationData Imdata;
-    int poitemNum;
+    boolean poitemNum;
 
 
     @Override
@@ -176,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
         markers = new MapPOIItem[2];
         mMapView.setPOIItemEventListener(this);
         Imdata = new ImformationData();
-        poitemNum = 0;
+        poitemNum = false;
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -495,7 +495,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
         }
         // 위치정보 업데이트
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000,0, this);
-        if (poitemNum == 1){
+        if (poitemNum == true){
             //선연결 부분
             polyline.addPoint(MapPoint.mapPointWithGeoCoord(routingx,routingy));
             polyline.addPoint(MapPoint.mapPointWithGeoCoord(routingx1,routingy1));
@@ -778,7 +778,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
                 mMapView.addPOIItem(maker2);
                 markers[1] = maker2;
                 Toast.makeText(this,"현재총이동거리(Km) : "+distanceEnd,Toast.LENGTH_SHORT).show();
-                poitemNum = 1;
+                poitemNum = true;
 
             }
         }
@@ -831,7 +831,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 markers = null;
-                poitemNum = 0;
+                poitemNum = false;
                 Intent intent = new Intent(getApplicationContext(), Myload.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
