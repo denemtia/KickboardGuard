@@ -10,12 +10,28 @@
 
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/title1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_x="15dp"
         android:layout_y="11dp"
-        android:text="Seneor"
+        android:text="킥보드를 움직여 "
+        android:textSize="50dp" />
+    <TextView
+        android:id="@+id/title2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_x="15dp"
+        android:layout_y="11dp"
+        android:text=" 후방감지 센서"
+        android:textSize="50dp" />
+    <TextView
+        android:id="@+id/title3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_x="15dp"
+        android:layout_y="11dp"
+        android:text="거리를 조절하세요"
         android:textSize="50dp" />
 
 
@@ -30,59 +46,14 @@
     <SeekBar
         android:id="@+id/seekBar1"
         style="@style/Widget.AppCompat.SeekBar.Discrete"
+        android:thumb="@drawable/thumb_user"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:max="10"
-        android:progress="3" />
+        android:max="2500"
+        android:min="1000"
+        android:progress="1700" />
 
-    <RadioGroup
-        android:id="@+id/radioGroup1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
 
-        <RadioButton
-            android:id="@+id/radio0"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="1500" />
-
-        <RadioButton
-            android:id="@+id/radio1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="1600" />
-
-        <RadioButton
-            android:id="@+id/radio2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="1700" />
-
-        <RadioButton
-            android:id="@+id/radio3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="1800" />
-
-        <RadioButton
-            android:id="@+id/radio4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="1900" />
-
-        <RadioButton
-            android:id="@+id/radio5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="2000" />
-
-    </RadioGroup>
-    <Button
-        android:id="@+id/button1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="선택" />
 
 
     <ToggleButton
@@ -98,7 +69,7 @@
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="결과창"
+        android:text="센서탐지 범위"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
 

@@ -254,7 +254,7 @@ public class Helmet extends Fragment {
             public void onClick(DialogInterface dialog, int item){
                 if(item == mPairedDeviceCount){
                     Toast.makeText(activit.getApplicationContext(), "연결할 장치를 선택하지 않았습니다.", Toast.LENGTH_LONG).show();
-                    activit.finish();
+                    //activit.finish();
                 }
                 else{
                     connectToSelectedDevice(items[item].toString());
