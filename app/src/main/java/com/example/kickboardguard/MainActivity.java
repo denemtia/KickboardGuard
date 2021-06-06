@@ -14,6 +14,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.Gravity;
@@ -55,7 +56,8 @@ import android.media.MediaPlayer;
 
 import com.example.kickboardguard.Setting.MyloadListView;
 import com.example.kickboardguard.Setting.SettingActivity;
-import com.google.gson.Gson;
+import com.example.kickboardguard.Setting.Settings;
+
 
 public class MainActivity extends AppCompatActivity implements net.daum.mf.map.api.MapView.CurrentLocationEventListener, MapReverseGeoCoder.ReverseGeoCodingResultListener, LocationListener, MapView.POIItemEventListener {
 
@@ -71,6 +73,8 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
     private Home home;
     private Helmet helmet;
     private Sensor sensor;
+    private Myload myload;
+    private SettingActivity settings;
 
     private LocationManager locationManager;
     private Location mLastlocation = null;
@@ -78,7 +82,10 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
     private long backbtntime=0;
     Geocoder g = new Geocoder(this);
 
-    Location location; double latitude; double longitude;
+
+    Location location;
+    double latitude;
+    double longitude;
     private GpsTracker gpsTracker;
 
     //myload 변수들
@@ -94,6 +101,8 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
     MapPOIItem [] markers;
     private static ImformationData Imdata;
     int poitemNum;
+    String adarray;
+    int lonum=0;
 
 
     @Override
@@ -101,16 +110,19 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         // 프레그먼트 설정 ##########################################################################
 
         home = new Home();
         helmet = new Helmet();
         sensor = new Sensor();
+        myload = new Myload();
+        settings = new SettingActivity();
         // 프레그먼트 설정 ##########################################################################
 
 
         // 메뉴 설정 ################################################################################
-        final String[] items = {"홈", "설정", "후방감지", "헬멧","내경로"};
+        final String[] items = {"홈", "설정", "후방감지", "헬멧", "내경로"};
         ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, items);
         listview = (ListView) findViewById(R.id.drawer_menulist);
         listview.setAdapter(adapter);
@@ -197,19 +209,20 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
 
 
         boolean inresultCode = false, inresultMsg = false, intotalCount = false, innumOfRows = false, inpageNo = false;
-        boolean infreqocZoneVer = false, infreqocZoneId = false, infreqocZoneNm = false, insignguCode = false, insignguNm=false;
-        boolean inacdntCo = false, incenterX= false , incenterY = false , inzoneRds = false;
+        boolean infreqocZoneVer = false, infreqocZoneId = false, infreqocZoneNm = false, insignguCode = false, insignguNm = false;
+        boolean inacdntCo = false, incenterX = false, incenterY = false, inzoneRds = false;
 
-        String resultCode = null, resultMsg = null, totalCount = null, numOfRows = null, pageNo = null, freqocZoneVer=null, freqocZoneId=null, freqocZoneNm=null;
+        String resultCode = null, resultMsg = null, totalCount = null, numOfRows = null, pageNo = null, freqocZoneVer = null, freqocZoneId = null, freqocZoneNm = null;
         String signguCode = null, signguNm = null, acdntCo = null, centerX = null, centerY = null, zoneRds = null;
 
 
-        try{
+        try {
+            splitaddress();
             URL url = new URL("http://apis.data.go.kr/B552468/acdntFreqocZone/getAcdntFreqocZone?" +
                     "serviceKey=sY6y0bVXhsk6jkopIZpTWSZAAXLGLYJB1Tg1O%2B0f%2BcqvmV2Pe9P1Yx7Ne3JolOMxBbHcjEba%2BsXRABa4ZUUtyQ%3D%3D" +       //서비스키
                     "&numOfRows=100" +           //한 페이지 결과 수
                     "&pageNo=1" +               //페이지 번호
-                    "&signguCode=46110" +       //시군구코드
+                    "&signguCode="+lonum +       //시군구코드
                     "&datatype=XML"             //데이터 유형
             ); //검색 URL부분
 
@@ -221,28 +234,28 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
             int parserEvent = parser.getEventType();
             System.out.println("파싱시작합니다.");
 
-            while (parserEvent != XmlPullParser.END_DOCUMENT){
-                switch(parserEvent){
+            while (parserEvent != XmlPullParser.END_DOCUMENT) {
+                switch (parserEvent) {
                     case XmlPullParser.START_TAG://parser가 시작 태그를 만나면 실행
-                        if(parser.getName().equals("resultCode")){ //title 만나면 내용을 받을수 있게 하자
+                        if (parser.getName().equals("resultCode")) { //title 만나면 내용을 받을수 있게 하자
                             inresultCode = true;
                         }
-                        if(parser.getName().equals("resultMsg")){ //address 만나면 내용을 받을수 있게 하자
+                        if (parser.getName().equals("resultMsg")) { //address 만나면 내용을 받을수 있게 하자
                             inresultMsg = true;
                         }
-                        if(parser.getName().equals("totalCount")){ //mapx 만나면 내용을 받을수 있게 하자
+                        if (parser.getName().equals("totalCount")) { //mapx 만나면 내용을 받을수 있게 하자
                             intotalCount = true;
                         }
-                        if(parser.getName().equals("numOfRows")){ //mapy 만나면 내용을 받을수 있게 하자
+                        if (parser.getName().equals("numOfRows")) { //mapy 만나면 내용을 받을수 있게 하자
                             innumOfRows = true;
                         }
-                        if(parser.getName().equals("pageNo")){ //mapy 만나면 내용을 받을수 있게 하자
+                        if (parser.getName().equals("pageNo")) { //mapy 만나면 내용을 받을수 있게 하자
                             inpageNo = true;
                         }
-                        if(parser.getName().equals("freqocZoneVer")){ //mapy 만나면 내용을 받을수 있게 하자
+                        if (parser.getName().equals("freqocZoneVer")) { //mapy 만나면 내용을 받을수 있게 하자
                             infreqocZoneVer = true;
                         }
-                        if(parser.getName().equals("freqocZoneId")){ //mapy 만나면 내용을 받을수 있게 하자
+                        if (parser.getName().equals("freqocZoneId")) { //mapy 만나면 내용을 받을수 있게 하자
                             infreqocZoneId = true;
                         }
                         if(parser.getName().equals("freqocZoneNm")){ //mapy 만나면 내용을 받을수 있게 하자
@@ -293,7 +306,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
                             freqocZoneId = parser.getText();
                             infreqocZoneId = false;
                         }
-                        if(infreqocZoneNm){ //isMapy이 true일 때 태그의 내용을 저장.
+                        if (infreqocZoneNm) { //isMapy이 true일 때 태그의 내용을 저장.
                             freqocZoneNm = parser.getText();
                             infreqocZoneNm = false;
                         }
@@ -478,7 +491,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
             return;
         }
         // 위치정보 업데이트
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000,0, this);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, this);
     }
 
     @Override
@@ -811,6 +824,71 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
 
     }
 
+    public void splitaddress() {
+        gpsTracker = new GpsTracker(MainActivity.this);
+        double latitude = gpsTracker.getLatitude();
+        double longitude = gpsTracker.getLongitude();
+        int a=0;
+        String address = getCurrentAddress(latitude, longitude);
+        String result = address.substring(5);
+        String array[] = result.split(" ");
+        adarray=array[0];
+        switch (adarray) {
+            case "서울특별시":
+                lonum=11;
+                break;
+            case "부산광역시":
+                lonum=26;
+                break;
+            case "대구광역시":
+                lonum=27;
+                break;
+            case "인천광역시":
+                lonum=28;
+                break;
+            case "광주광역시":
+                lonum=29;
+                break;
+            case "대전광역시":
+                lonum=30;
+                break;
+            case "울산광역시":
+                lonum=31;
+                break;
+            case "세종특별자치시":
+                lonum=36;
+                break;
+            case "경기도":
+                lonum=41;
+                break;
+            case "강원도":
+                lonum=42;
+                break;
+            case "충청북도":
+                lonum=43;
+                break;
+            case "충청남도":
+                lonum=44;
+                break;
+            case "전라북도":
+                lonum=45;
+                break;
+            case "전라남도":
+                lonum=46;
+                break;
+            case "경상북도":
+                lonum=47;
+                break;
+            case "경상남도":
+                lonum=48;
+                break;
+            case "제주특별자치도":
+                lonum=50;
+                break;
+
+
+        }
+    }
     //말풍선 클릭시 호출란들
     @Override
     public void onPOIItemSelected(MapView mapView, MapPOIItem mapPOIItem) {
@@ -851,7 +929,5 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
     public static ImformationData getData(){
         return Imdata;
     }
-
 }
-
 
