@@ -29,6 +29,7 @@ public class Myload extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
         load_start.setOnClickListener(new View.OnClickListener() {

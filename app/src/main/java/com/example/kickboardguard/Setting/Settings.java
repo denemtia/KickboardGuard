@@ -73,11 +73,6 @@ public class Settings extends PreferenceFragmentCompat implements SharedPreferen
         email.setSummary(email1);
         name.setSummary(name1);
 
-        //데이터 가져오기
-//        data.setName(name1);
-//        data.setEmail(email1);
-//        Log.d("들어옴", data.getName()+data.getEmail()+data.getDistance());
-
 
         logout.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -132,10 +127,6 @@ public class Settings extends PreferenceFragmentCompat implements SharedPreferen
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-//        Preference pref = findPreference(key);
-//        if (pref instanceof PreferenceScreen){
-//            EditTextPreference listPref = (EditTextPreference) pref;
-//            pref.setSummary(listPref.getText());
-//        }
+
     }
 }

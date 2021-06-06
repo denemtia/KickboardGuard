@@ -10,14 +10,17 @@ public class ImformationData {
     private float distance;
     private String name;
     private String email;
+    private int id;
 
     public ImformationData(){
         distance = 0;
         name = null;
         email = null;
+        id = 0;
     }
 
-    public ImformationData(String name, String email, float distance) {
+    public ImformationData(int id, String name, String email, float distance) {
+      this.id = id;
       this.name = name;
       this.email = email;
       this.distance = distance;
@@ -52,6 +55,8 @@ public class ImformationData {
     @Exclude
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
+
+        result.put("id", id);
         result.put("name", name);
         result.put("email",email);
         result.put("distance",distance);

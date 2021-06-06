@@ -780,11 +780,6 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
                 Toast.makeText(this,"현재총이동거리(Km) : "+distanceEnd,Toast.LENGTH_SHORT).show();
                 poitemNum = 1;
 
-//                //리스트뷰 값 전달
-//               Intent intent = new Intent(this, MyloadListView.class);
-//               String strNo = String.format("%f",distanceEnd);
-//               intent.putExtra("myload",strNo);
-
             }
         }
 

@@ -2,41 +2,116 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/relativeLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.kickboardguard.Setting.MyloadListView">
+    tools:context=".Setting.MyloadListView">
 
-    <ScrollView
-        android:id="@+id/scroll_view"
+    <RelativeLayout
+        android:id="@+id/layout_line1"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="5dp"
-        android:fillViewport="true"
-        tools:layout_editor_absoluteX="8dp"
-        tools:layout_editor_absoluteY="8dp">
+        android:layout_height="wrap_content">
 
-        <ListView
-            android:id="@+id/db_list_view"
+        <EditText
+            android:id="@+id/text1"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"></ListView>
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="내경로"
+            android:textColor="@color/blue_dark"
+            android:textSize="30dp" />
 
-    </ScrollView>
+        <EditText
+            android:layout_below="@+id/text1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            android:text="내 주행거리를 추가 및 삭제를 할 수 있습니다."/>
 
-
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/layout_line"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/layout_line1">
         <Button
             android:id="@+id/btn_update"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="12dp"
-            android:layout_alignParentRight="true"
-            android:background="#AFEEEE"
-            android:text="업데이트" />
+            android:text="업데이트"/>
 
-    <Button
-        android:id="@+id/btn_select"
-        android:layout_width="wrap_content"
+        <Button
+            android:id="@+id/btn_back3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="뒤로가기"
+            />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/third"
+        android:layout_below="@+id/layout_line"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/titleAvg"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="이름"
+            android:layout_weight="0.7"
+            android:textSize="15sp"
+            android:textColor="@color/blue_dark" />
+
+        <TextView
+            android:id="@+id/titleCaloire"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.7"
+            android:layout_gravity="center_horizontal"
+            android:text="이메일"
+            android:textSize="15sp"
+            android:textColor="@color/blue_dark" />
+
+        <TextView
+            android:id="@+id/titleDistance"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.7"
+            android:layout_gravity="center_horizontal"
+            android:text=""
+            android:textSize="15sp"
+            android:textColor="@color/blue_dark" />
+
+        <TextView
+            android:id="@+id/titleTemp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:layout_gravity="center_horizontal"
+            android:text="주행거리"
+            android:textSize="15sp"
+            android:textColor="@color/blue_dark" />
+        <TextView
+            android:id="@+id/titleWet"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:layout_gravity="center_horizontal"
+            android:text="       "
+            android:textSize="15sp"
+            android:textColor="@color/blue_dark" />
+    </LinearLayout>
+
+
+    <ListView
+        android:id="@+id/listviewmsg"
+        android:layout_below="@+id/third"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:text="선택"/>
+        tools:layout_editor_absoluteY="242dp"></ListView>
+
+
 </RelativeLayout>
