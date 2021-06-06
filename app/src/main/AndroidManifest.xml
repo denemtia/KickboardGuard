@@ -39,6 +39,11 @@
         <activity android:name=".Setting.MyloadListView"/>
         <activity android:name=".Myload"/>
 
+        <activity
+            android:name=".Question.WelcomeActivity1"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
 
         <meta-data
             android:name="com.kakao.sdk.AppKey"

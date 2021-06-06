@@ -14,6 +14,7 @@
     <string name="next">다음</string>
     <string name="skip">스킵</string>
     <string name="start">시작하기</string>
+    <string name="back">뒤로가기</string>
 
     <string name="slide_1_title">위치 엑세스하는 방법</string>
     <string name="slide_1_desc">앱 사용 중에만 허용을 눌러주세요.</string>
