@@ -29,6 +29,7 @@ import android.widget.NumberPicker;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -107,23 +108,31 @@ public class Sensor extends Fragment {
         // Inflate the layout for this fragment
 
         View view = inflater.inflate(R.layout.fragment_sensor,container,false);
-        final RadioGroup rg = (RadioGroup)view.findViewById(R.id.radioGroup1);
-        Button b = (Button)view.findViewById(R.id.button1);
         final TextView tv = (TextView)view.findViewById(R.id.textView2);
+        SeekBar seekBar  = (SeekBar)view.findViewById(R.id.seekBar1);
 
-        b.setOnClickListener(new View.OnClickListener() {
+
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
-            public void onClick(View v) {
-                int id = rg.getCheckedRadioButtonId();
-                //getCheckedRadioButtonId() 의 리턴값은 선택된 RadioButton 의 id 값.
-                RadioButton rb = (RadioButton)view.findViewById(id);
-                String rbstring=rb.getText().toString();
-                String getlimits=rbstring.trim();
-                getlimit=Integer.parseInt(getlimits);
-                tv.setText("결과: " +getlimits);
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                // onProgressChange - Seekbar 값 변경될때마다 호출
+                Log.d("시크바", String.format("onProgressChanged 값 변경 중 : progress [%d] fromUser [%b]", progress, fromUser));
+                tv.setText("거리: " +progress);
+            }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                // onStartTeackingTouch - SeekBar 값 변경위해 첫 눌림에 호출
+                Log.d("시크바", String.format("onStartTrackingTouch 값 변경 시작 : progress [%d]", seekBar.getProgress()));
 
-            } // end onClick()
-        });  // end Listener
+            }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                // onStopTrackingTouch - SeekBar 값 변경 끝나고 드래그 떼면 호출
+                Log.d("시크바", String.format("onStopTrackingTouch 값 변경 종료: progress [%d]", seekBar.getProgress()));
+                getlimit=seekBar.getProgress();
+            }
+        });
+
 
 
         ToggleButton bton_button = (ToggleButton) view.findViewById(R.id.BTon_button);
@@ -257,7 +266,7 @@ public class Sensor extends Fragment {
             public void onClick(DialogInterface dialog, int item){
                 if(item == mPairedDeviceCount){
                     Toast.makeText(activit.getApplicationContext(), "연결할 장치를 선택하지 않았습니다.", Toast.LENGTH_LONG).show();
-                    activit.finish();
+                    //activit.finish();
                 }
                 else{
                     connectToSelectedDevice(items[item].toString());

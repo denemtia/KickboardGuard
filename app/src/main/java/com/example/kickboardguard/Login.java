@@ -37,7 +37,6 @@ public class Login extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        TextView tvContents = (TextView)findViewById(R.id.tv_contents);
         signInButton = findViewById(R.id.signInButton);
         Glide.with(this)
                 .load("http://goo.gl/gEgYUd")

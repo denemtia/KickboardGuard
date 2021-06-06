@@ -14,6 +14,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.Gravity;
@@ -55,7 +56,8 @@ import android.media.MediaPlayer;
 
 import com.example.kickboardguard.Setting.MyloadListView;
 import com.example.kickboardguard.Setting.SettingActivity;
-import com.google.gson.Gson;
+import com.example.kickboardguard.Setting.Settings;
+
 
 public class MainActivity extends AppCompatActivity implements net.daum.mf.map.api.MapView.CurrentLocationEventListener, MapReverseGeoCoder.ReverseGeoCodingResultListener, LocationListener, MapView.POIItemEventListener {
 
@@ -71,6 +73,8 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
     private Home home;
     private Helmet helmet;
     private Sensor sensor;
+    private Myload myload;
+    private SettingActivity settings;
 
     private LocationManager locationManager;
     private Location mLastlocation = null;
@@ -78,7 +82,10 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
     private long backbtntime=0;
     Geocoder g = new Geocoder(this);
 
-    Location location; double latitude; double longitude;
+
+    Location location;
+    double latitude;
+    double longitude;
     private GpsTracker gpsTracker;
 
     //myload 변수들
@@ -93,7 +100,9 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
     MapPolyline polyline;
     MapPOIItem [] markers;
     private static ImformationData Imdata;
-    boolean poitemNum;
+    int poitemNum;
+    String adarray;
+    int lonum=0;
 
 
     @Override
@@ -101,16 +110,19 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         // 프레그먼트 설정 ##########################################################################
 
         home = new Home();
         helmet = new Helmet();
         sensor = new Sensor();
+        myload = new Myload();
+        settings = new SettingActivity();
         // 프레그먼트 설정 ##########################################################################
 
 
         // 메뉴 설정 ################################################################################
-        final String[] items = {"홈", "설정", "후방감지", "헬멧","내경로"};
+        final String[] items = {"홈", "설정", "후방감지", "헬멧", "내경로"};
         ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, items);
         listview = (ListView) findViewById(R.id.drawer_menulist);
         listview.setAdapter(adapter);
@@ -176,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
         markers = new MapPOIItem[2];
         mMapView.setPOIItemEventListener(this);
         Imdata = new ImformationData();
-        poitemNum = false;
+        poitemNum = 0;
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -478,7 +490,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
             return;
         }
         // 위치정보 업데이트
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000,0, this);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, this);
     }
 
     @Override
@@ -495,7 +507,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
         }
         // 위치정보 업데이트
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000,0, this);
-        if (poitemNum == true){
+        if (poitemNum == 1){
             //선연결 부분
             polyline.addPoint(MapPoint.mapPointWithGeoCoord(routingx,routingy));
             polyline.addPoint(MapPoint.mapPointWithGeoCoord(routingx1,routingy1));
@@ -778,7 +790,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
                 mMapView.addPOIItem(maker2);
                 markers[1] = maker2;
                 Toast.makeText(this,"현재총이동거리(Km) : "+distanceEnd,Toast.LENGTH_SHORT).show();
-                poitemNum = true;
+                poitemNum = 1;
 
             }
         }
@@ -811,6 +823,71 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
 
     }
 
+    public void splitaddress() {
+        gpsTracker = new GpsTracker(MainActivity.this);
+        double latitude = gpsTracker.getLatitude();
+        double longitude = gpsTracker.getLongitude();
+        int a=0;
+        String address = getCurrentAddress(latitude, longitude);
+        String result = address.substring(5);
+        String array[] = result.split(" ");
+        adarray=array[0];
+        switch (adarray) {
+            case "서울특별시":
+                lonum=11;
+                break;
+            case "부산광역시":
+                lonum=26;
+                break;
+            case "대구광역시":
+                lonum=27;
+                break;
+            case "인천광역시":
+                lonum=28;
+                break;
+            case "광주광역시":
+                lonum=29;
+                break;
+            case "대전광역시":
+                lonum=30;
+                break;
+            case "울산광역시":
+                lonum=31;
+                break;
+            case "세종특별자치시":
+                lonum=36;
+                break;
+            case "경기도":
+                lonum=41;
+                break;
+            case "강원도":
+                lonum=42;
+                break;
+            case "충청북도":
+                lonum=43;
+                break;
+            case "충청남도":
+                lonum=44;
+                break;
+            case "전라북도":
+                lonum=45;
+                break;
+            case "전라남도":
+                lonum=46;
+                break;
+            case "경상북도":
+                lonum=47;
+                break;
+            case "경상남도":
+                lonum=48;
+                break;
+            case "제주특별자치도":
+                lonum=50;
+                break;
+
+
+        }
+    }
     //말풍선 클릭시 호출란들
     @Override
     public void onPOIItemSelected(MapView mapView, MapPOIItem mapPOIItem) {
@@ -831,7 +908,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 markers = null;
-                poitemNum = false;
+                poitemNum = 0;
                 Intent intent = new Intent(getApplicationContext(), Myload.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
@@ -851,7 +928,5 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
     public static ImformationData getData(){
         return Imdata;
     }
-
 }
-
 
