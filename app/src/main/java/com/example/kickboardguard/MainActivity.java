@@ -82,10 +82,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
     private long backbtntime=0;
     Geocoder g = new Geocoder(this);
 
-
-    Location location;
-    double latitude;
-    double longitude;
+    Location location; double latitude; double longitude;
     private GpsTracker gpsTracker;
 
     //myload 변수들
@@ -109,7 +106,6 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
         // 프레그먼트 설정 ##########################################################################
 
@@ -490,7 +486,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
             return;
         }
         // 위치정보 업데이트
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, this);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000,0, this);
     }
 
     @Override
@@ -928,5 +924,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
     public static ImformationData getData(){
         return Imdata;
     }
+
 }
+
 
