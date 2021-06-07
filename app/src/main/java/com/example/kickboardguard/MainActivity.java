@@ -100,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
     int poitemNum;
     String adarray;
     int lonum=0;
+    float distanceto;
 
 
     @Override
@@ -429,6 +430,9 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
             return;
         }
 
+        Location locationA=new Location("");
+        locationA.setLatitude(34.797587);
+        locationA.setLongitude(126.386025);
         Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         //  getSpeed() 함수를 이용하여 속도를 계산
         if (lastKnownLocation != null) {
@@ -453,6 +457,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
             distanceMeters = mLastlocation.distanceTo(lastKnownLocation);
             distanceKm = distanceMeters / 1000f;
             distanceStart += distanceKm;
+            distanceto=mLastlocation.distanceTo(locationA);
             Log.d("distance",String.valueOf(distanceStart));
             //Toast.makeText(this,"현재이동거리(Km) : "+distanceResult,Toast.LENGTH_SHORT).show();
             String formatLastDate = sdf.format(new Date(mLastlocation.getTime()));
@@ -469,6 +474,14 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
 
             }
             Log.d("Cal Speed", String.valueOf(kmhcalSpeed));
+            if(distanceto<200){
+                MediaPlayer player=MediaPlayer.create(this,R.raw.dingdong);
+                player.start();
+                Toast.makeText(this.getApplicationContext(),"근방에 사고다발 구역입니다",
+                        Toast.LENGTH_SHORT).show();
+
+
+            }
         }
         // 현재위치를 지난 위치로 변경
         mLastlocation = lastKnownLocation;
