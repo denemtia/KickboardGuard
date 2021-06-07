@@ -484,10 +484,10 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
 
             }
             Log.d("Cal Speed", String.valueOf(kmhcalSpeed));
-            if(distanceto==200){
+            if(distanceto<210 && distanceto>190){
                 MediaPlayer player=MediaPlayer.create(this,R.raw.dingdong);
                 player.start();
-                Toast.makeText(this.getApplicationContext(),"근방에 사고다발 구역입니다",
+                Toast.makeText(this.getApplicationContext(),"전방에 사고다발위험 구간입니다",
                         Toast.LENGTH_SHORT).show();
 
 
