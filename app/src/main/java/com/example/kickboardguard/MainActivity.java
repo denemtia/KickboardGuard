@@ -431,8 +431,9 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
         }
 
         Location locationA=new Location("");
-        locationA.setLatitude(34.797587);
-        locationA.setLongitude(126.386025);
+        locationA.setLatitude(34.790503);
+        locationA.setLongitude(126.363488);
+
         Location lastKnownLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         //  getSpeed() 함수를 이용하여 속도를 계산
         if (lastKnownLocation != null) {
@@ -474,7 +475,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
 
             }
             Log.d("Cal Speed", String.valueOf(kmhcalSpeed));
-            if(distanceto<200){
+            if(distanceto==200){
                 MediaPlayer player=MediaPlayer.create(this,R.raw.dingdong);
                 player.start();
                 Toast.makeText(this.getApplicationContext(),"근방에 사고다발 구역입니다",
