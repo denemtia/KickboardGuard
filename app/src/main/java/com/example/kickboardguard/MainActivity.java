@@ -202,6 +202,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
 
         // 공공 데이터 ##############################################################################
         StrictMode.enableDefaults();
+        splitaddress();
 
 
         boolean inresultCode = false, inresultMsg = false, intotalCount = false, innumOfRows = false, inpageNo = false;
@@ -217,7 +218,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
                     "serviceKey=sY6y0bVXhsk6jkopIZpTWSZAAXLGLYJB1Tg1O%2B0f%2BcqvmV2Pe9P1Yx7Ne3JolOMxBbHcjEba%2BsXRABa4ZUUtyQ%3D%3D" +       //서비스키
                     "&numOfRows=100" +           //한 페이지 결과 수
                     "&pageNo=1" +               //페이지 번호
-                    "&signguCode=46110" +       //시군구코드
+                    "&signguCode="+lonum+       //시군구코드
                     "&datatype=XML"             //데이터 유형
             ); //검색 URL부분
 
@@ -228,6 +229,7 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
 
             int parserEvent = parser.getEventType();
             System.out.println("파싱시작합니다.");
+
 
             while (parserEvent != XmlPullParser.END_DOCUMENT){
                 switch(parserEvent){
