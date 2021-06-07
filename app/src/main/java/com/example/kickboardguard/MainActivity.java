@@ -346,12 +346,22 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
                                     Integer.parseInt(zoneRds), // radius
                                     Color.argb(128, 255, 0, 0), // strokeColor
                                     Color.argb(128, 0, 255, 0) // fillColor
+
                             );
                             //circle.setTag(Integer.parseInt(freqocZoneId));
                             mMapView.addCircle(circle);
+                            MapCircle circle2 = new MapCircle(
+                                    MapPoint.mapPointWithGeoCoord(34.790503, 126.363488), // center
+                                    20, // radius
+                                    Color.argb(128, 255, 0, 0), // strokeColor
+                                    Color.argb(128, 255, 255, 0) // fillColor
 
+                            );
+                            //circle.setTag(Integer.parseInt(freqocZoneId));
+                            mMapView.addCircle(circle2);
                         }
                         break;
+
                 }
                 parserEvent = parser.next();
             }
@@ -458,7 +468,6 @@ public class MainActivity extends AppCompatActivity implements net.daum.mf.map.a
             distanceMeters = mLastlocation.distanceTo(lastKnownLocation);
             distanceKm = distanceMeters / 1000f;
             distanceStart += distanceKm;
-            distanceto=mLastlocation.distanceTo(locationA);
             Log.d("distance",String.valueOf(distanceStart));
             //Toast.makeText(this,"현재이동거리(Km) : "+distanceResult,Toast.LENGTH_SHORT).show();
             String formatLastDate = sdf.format(new Date(mLastlocation.getTime()));
